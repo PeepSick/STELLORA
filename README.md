@@ -7,9 +7,12 @@ Stellora is a 3D "living galaxy" that renders your knowledge base and your
 personal photo memories as an explorable procedural galaxy — built with
 React, Three.js (`@react-three/fiber`), and Zustand.
 
-<!-- TODO: add a real screenshot or demo GIF of the app here before publishing.
-     Capture the KNOWLEDGE view (glowing node galaxy) and the STELLORA view
-     (photo memory day-nodes) side by side. -->
+![Stellora setup + mode-switching walkthrough](docs/demo.gif)
+
+*(Terminal walkthrough of install → dev → switching Knowledge/Stellora mode,
+generated with [LeoSis Animator](../gif). Not a screen recording of the 3D
+galaxy UI itself — TODO: replace with (or add alongside) an actual capture of
+the running app once screen-recording is available.)*
 
 ## What it does
 
