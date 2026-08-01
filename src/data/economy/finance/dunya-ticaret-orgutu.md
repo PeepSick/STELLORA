@@ -1,0 +1,82 @@
+---
+title: Dünya_Ticaret_Örgütü
+url: 
+tags: ["ticaret", "gatt", "olan", "tarafl", "uluslararas", "karar", "genel", "kabul"]
+fetched_at: 2026-06-04T21:01:46.400Z
+source: hamdata
+sector: "economy"
+sub_sector: "finance"
+confidence: verified
+confidence_score: 0.757
+fusion_at: "2026-06-04T22:29:38.762Z"
+quality_layer: 2
+quality_score: 0.757
+quality_density: 0.803
+quality_vocab: 0.385
+sector_hint: geography
+---
+
+# Dünya_Ticaret_Örgütü
+
+Dünya Ticaret Örgütü (DTÖ) (İngilizce: World Trade Organization, WTO), çok taraflı ticaret sisteminin yasal ve kurumsal organıdır. WTO, hükûmetlerin iç ticaret yasalarını ve düzenlemelerini nasıl yapacakları hususunda yasal bir çerçeve ortaya koymakta olup toplu görüşmeler ve müzakereler yoluyla ülkeler arasında ticari ilişkilerin geliştirildiği bir platformdur.
+
+Kuruluş ve fonksiyonları
+WTO, 1 Ocak 1995'te kurulmuştur. Uruguay Round'a taraf olan ülkeler 15 Aralık 1993'te görüşmeleri tamamlamış ve Fas'ın Marakeş kentinde Nisan 1994'te "Nihai Karar" bakanlar tarafından imzalanmıştır. 15 Nisan 1994'te ilan edilen Marakeş Deklarasyonu, Uruguay Round'u görüşmelerini onaylamış ve Tarifeler ve Ticaret Genel Anlaşması (GATT) altında gerçekleştirilen yedi görüşmenin "dünya ekonomisini güçlendirdiği ve daha fazla ticaret, yatırım, istihdam ve gelir artışı sağladığı"nı ilan etmiştir. WTO, Uruguay Round'u görüşmelerinin şekillendiği ve bir anlaşmadır ve GATT'ın devamıdır.
+WTO, sadece üyelik açısından (1994 sonunda 128 üye) GATT'tan fazla değil, aynı zamanda, uygulandığı ticari faaliyetler ve ticaret politikalar açısından da daha geniş bir alanı kapsamaktadır. GATT, sadece mal ticaretini kapsarken, WTO mal, hizmetler ve fikri mülkiyet hakları olarak da bilinen "fikir ticareti"'ni de kapsamaktadır.
+WTO'nun esas fonksiyonları; topyekûn olarak WTO'yu oluşturan çok taraflı ticaret görüşmelerini yönetmek ve uygulamak, çok taraflı ticaret görüşmelerinde bir forum olarak görev yapmak, ticari anlaşmazlıklarına çözüm aramak, millî ticaret politikalarını denetlemek ve bu amaçlarla global ekonomik politika yapımında görevli uluslararası kuruluşlarla işbirliğine gitmektir.
+WTO anlaşması, tarımdan, tekstile ve konfeksiyona, hizmetlerden fikrî mülkiyet hakları kurallarına kadar, değişik alanlarda 29 ayrı metinden oluşmaktadır. Bunlara ilave olarak WTO üyelerine ilave sorumluluklar ve taahhütler yükleyen, ilave 25 deklarasyon, karar ve anlaşma da bulunmaktadır. WTO kuralları geleneksel olarak hassas sektörler olarak kabul edilen tarım malları ticareti, tekstil ve konfeksiyon ürünlerini de kapsamaktadır. Tarımda kabul edilen kurallar piyasaya giriş şartlarını, yerli üretimi destekleme kurallarını, ihracat teşvik uygulamalarını ve gıda güvenliği, bitki ve hayvan sağlığı kurallarını içermektedir. Tekstil ve konfeksiyonda yeni kurallar Çok Elyaflılar Anlaşması'ndan sonra 10 yıllık bir geçiş dönemi ile WTO kurallarına dahil olacaktır.
+Hizmetler ticaretindeki ilk anlaşma; üyelerin kapsamı, millî uygulamalar ve piyasaya giriş konularındaki yükümlülüklerinden bahsetmekte ve hizmetler ticaretinin daha da liberalleştirilmesi hususunda genel bir çerçeve çizmektedir. Devam eden görüşmeler halihazırda finansal hizmetlerde piyasaya giriş taahhütleri, temel iletişim sektörleri, deniz nakliyatı ve insanların sınırdan sınıra geçişi hakkındadır. Görüşmelerde diğer bir ilk de fikrî mülkiyet haklarının ticaretle ilgili yönüdür (TRIPS). Bu anlaşma, sadece telif hakları, patent hakları gibi yeni fikrî mülkiyet haklarını dile getirmekle kalmamakta, ayrıca coğrafi işaretler, endüstri dizaynı, ticaret markaları ve ticaret sırları ve know-how (süreç bilgisi) haklarını da koruma altına almaktadır. Mal ticaretinde WTO kuralları, anti-damping uygulamaları, teşvikler ve karşı uygulamalar, gümrük uygulamaları ve ithalat lisansı konularını da kapsamaktadır. Kurallar, şayet bu uygulamalar gündeme geldiğinde ne gibi kuralların tatbik edileceğini de açıklamaktadır.
+Yukarıda değinilen anlaşmalarla pek çok basit ve temel ilkeler hep birlikte yeni çok taraflı ticaret sistemini meydana getirmektedir. GATT'ın ana kuralları, üyeler arasında ve ithalat ile yerli üretim arasında ayrım yapmayı yasaklamaktadır. Mesela Madde I " En Çok Kayırılan Ülke " (MFN) fıkrasında herhangi bir ülkenin bir ülkeye uyguladığı imtiyazın başka ülkelere uygulanandan daha az olamayacağı belirtilmektedir. Ayrım yapmamanın bir diğer şekli de "ulusal muamele"dir ve mallar bir piyasaya girdiğinde en az yurt içinde üretilen mallar kadar kayırılabileceği belirtilmektedir.
+
+Tarife indirimleri
+GATT'ın 1948'de kuruluşunu takiben ortalama tarife seviyesi toplam yedi görüşmeyle kademeli olarak indirilmiştir. Uruguay Round bu başarılara bir yenisini eklemiştir. Ortalama tarife seviyeleri önemli ölçüde düşerken genel bağlı tarife seviyeleri de önemli miktarda artmıştır. Tarife indirimleri yoluyla piyasaya giriş taahhütleri Uruguay Round'unda toplam 22.500 sayfalık ulusal tarife listelerinde yer almaktadır.
+Pek çok kısımda beş yılda tamamlanacak olan tarife indirimleri gelişmiş ülkelerin sanayi ürünleri tarifelerinde toplam % 40'lık bir indirim sağlayan, ortalama % 6,3 olan tarifeleri, % 3,8'e indirmektedir ve gelişmekte olan ülkelerden yapılan sanayi ürünleri ithalatı değer olarak % 20'den % 44'e çıkaracaktır. Tarife yapısının daha yüksek kısmında yer alan ve % 15'in üzerinde tarifeleri kapsayan tüm kaynaklardan gelişmiş ülkelere yapılan ithalat; % 7'den % 5'e ve gelişmekte olan ülkelerden yapılan ithalatta % 9'dan % 5'e düşmüştür.
+
+WTO ve GATT arasındaki farklar
+WTO, sadece GATT'ın biraz genişletilmiş bir şekli değil, aksine tamamen değişik bir yapıya ve farklı bir karaktere sahiptir. İkisi arasındaki temel farklılıklar şöyle sıralanabilir;
+
+GATT, herhangi bir kurumsal yapısı olmayan ve kuruluşundaki amacı 1940'ta Uluslararası Ticaret Örgütü'nü kurmak olan ve bu amaçla çeşitli kuralları içeren çok taraflı bir anlaşmadır,
+GATT, geçici olarak kurulmuş ve 40 yıllık bir faaliyetten sonra anlaşmaya taraf olan hükûmetler GATT'ı sürekli bir anlaşmaya çevirmek istemişlerdir. WTO taahhütleri buna karşın sürekli bir karakter taşımaktadır,
+GATT kuralları sadece mal ticaretini kapsarken, WTO mal ticaretinin yanında, hizmetler ticareti ve ticari nitelikteki fikrî mülkiyet haklarını da kapsamaktadır,
+GATT anlaşması çok taraflı bir araçken 1980'lerde yeni pek çok anlaşma ilave edilerek, seçici bir yapıya dönmüştür. WTO'yu oluşturan anlaşmalar ise neredeyse tamamı çok taraflıdır ve taahhütler üyelerin tamamını bağlamaktadır,
+WTO, GATT'a göre anlaşmazlıkların çözümünde daha hızlı çalışan, otomatik mekanizmalara sahiptir.
+1947 GATT anlaşması 1995 yılının sonuna kadar yürürlükte kalmıştır ve bu suretle tüm GATT üyelerinin WTO anlaşmasını kabul etmeleri için gerekli süre sağlanmıştır. Fakat GATT, "GATT 1994" şeklinde WTO anlaşmasının bir parçası olarak uluslararası mal ticaretini etkileyen ana hususları belirlemeye devam edecektir.
+
+WTO karar alma yöntemleri
+WTO, GATT'ın geleneksel olarak karar alırken kullandığı yöntem oylama değil, fakat fikir birliği (consensus) yöntemidir. Bu prosedür üyelere, bazen çok taraflı ticaret sisteminin yararına oluşan görüş birliğine katılınsa da, kendi çıkarlarını, iyi bir şekilde göz önüne alınması imkânını sağlamaktadır. Görüş birliğinin sağlanamadığı durumlarda WTO, oylama yöntemini kullanmaktadır. Bu gibi durumlarda her ülke bir oy kullanarak, karar oy çokluğuyla alınmaktadır.
+WTO Anlaşması'nda kabul edilen dört değişik oylama yöntemi bulunmaktadır. 
+
+İlk olarak, WTO üyelerinin dörtte üçünün oyuyla herhangi birçok taraflı ticaret anlaşması oluşturulması kabul edilebilir.
+İkinci olarak, Bakanlar Konferansı dörtte üç çoğunlukla uluslararası bir anlaşma tarafından herhangi bir üyeye yüklenen bir sorumluluğu kaldırabilmektedir.
+Üçüncü olarak, uluslararası anlaşmaların hükümlerini iptal etme kararı ancak tüm üyelerce kabul edilmesi veya kararın niteliğine bağlı olarak üçte iki çoğunlukla alınabilmektedir. Fakat bu iptal kararları, sadece WTO üyeleri tarafından kabul edildikten sonra yürürlüğe girebilmektedir.
+Son olarak, yeni bir üyenin alınması ancak Bakanlar Konferansı'nda üçte iki çoğunlukla kabul edildikten sonra gerçekleşebilmektedir.
+
+WTO'da anlaşmazlıkların çözülmesi
+Anlaşmazlıkların çözümü sistemi, WTO'nun uluslararası ticaret sistemine güvenlik ve öngörü sağlayan bir unsurdur ve bu sistem sayesinde WTO üyeleri, uluslararası ticaret kurallarının aleyhlerine ihlali durumunda kendileri bir girişimde bulunmamakta, fakat çok taraflı anlaşmazlıkların çözümü sisteminin bu durumu çözmesini istemektedirler.
+İlke olarak imtiyazlar, verilen cezaya konu sektörle aynı olan sektöre verilmelidir. Şayet bu uygulanabilir değil veya etkin değilse, imtiyazlar anlaşmada yer alan farklı bir sektöre de verilebilir.
+Her durumda WTO'nun Anlaşmazlıkların Çözümü Organı (DSB) kabul edilen tavsiyelerin ve kuralların uygulanmasını izlemekte ve her türlü anlaşmazlığa konu olan durum, tamamen ortadan kalkmadıkça gündeminde bulunmaya devam etmektedir.
+
+Kalkınmakta olan ülkelere ve geçiş ekonomilerine yardım
+1994 yılı sonunda 128 GATT üyesi ülkeden 97'sini oluşturan gelişmekte olan ülkeler ve hâlen piyasa ekonomisine geçiş sürecinde olan ülkeler WTO'nun üye sayısı arttıkça, örgütte ağırlıkları daha da artmaktadır. Sonuç olarak; adı geçen ülkelerin ihtiyaç ve problemlerine büyük önem verilmektedir. Örnek olarak WTO Sekreterliği kendi başına veya diğer uluslararası organizasyonlarla işbirliğine giderek seminerler düzenlemekte ve WTO taahhütlerini uygulamada veya çok taraflı ticaret görüşmelerine etkin olarak katılmada ilgili ülke hükûmetlerine veya yetkili uzmanlarına teknik işbirliği imkânı sağlamaktadır. Bazı WTO faaliyetleriyle ilgili olarak ticaret politikaları ve anlaşmazlıkların çözümü konuları dahil olmak üzere, özel kurslar verilmektedir. Dahası gelişmekte olan ülkelere ve bunların içinde özellikle en az gelişmiş olan ülkelere kendi ihracatları ile ilgili olarak, ticaret ve tarife bilgileri hakkında ve bu ülkelerin WTO'ya katılmaları konusunda yardım edilmektedir.
+
+Ticaret ve çevre
+WTO, ticaret ve çevre konularını birbirine bağlamaktadır. Bu konuda 1995 yılında aşağıdaki konularla ilgilenmek üzere bir komite kurulmuştur; çoktaraflı çevre anlaşmaları, sürdürebilir büyüme, çevre ve ticaret, piyasalara giriş; özellikle gelişmekte olan ülkelere yapılan ihracatın geliştirilmesi, yurt içinde ticareti yasaklanan malların ticareti, ambalaj; etiket ve diğer dönüşümlü malzemelerin ticaretle ilgili mevzuatlarda birbirine uyumlu olmasının sağlanmaktır.
+2001 yılında başlatılan Doha Kalkınma Turu çerçevesinde ise, Ticaret ve Çevre Komitesi kurulmuş ve söz konusu komitenin, çevresel ürünlerde pazara giriş, çoktaraflı çevre anlaşmaları - WTO ilişkisi ve çevreye duyarlı ticaret pratiklerinin geliştirilmesi gibi konularda görevlendirilmesi karara bağlanmıştır.
+
+Üyeler
+WTO'nun 164 üyesi bulunmaktadır. Son katılan üye 30 Kasım 2015 'te örgüte dahil olan Kazakistan'dır. Üyeler; Antigua ve Barbuda, Arjantin, Avustralya, Avusturya, Bahreyn, Bangladeş, Barbados, Belçika, Belize, Bolivya, Botsvana, Brezilya, Brunei, Burkina Faso, Burundi, Yeşil Burun Adaları, Kanada, Orta Afrika Cumhuriyeti, Şili, Kazakistan, Kolombiya, Kosta Rika, Fildişi Sahili, Kazakistan, Küba, Kıbrıs, Kırgızistan, Çin, Çekya, Danimarka, Cibuti, Dominika, Dominik Cumhuriyeti, Mısır, El Salvador, Estonya, Finlandiya, Fransa, Gabon, Almanya, Gana, Yunanistan, Grenada, Guatemala, Gine, Yeni Gine, Guyana, Honduras, Hong Kong, Macaristan, İzlanda, Hindistan, Endonezya, İrlanda, İsrail, İtalya, Jamaika, Japonya, Kenya, Güney Kore, Kuveyt, Lesotho, Lihtenştayn, Lüksemburg, Makau, Madagaskar, Malavi, Malezya, Maldivler, Mali, Malta, Moritanya, Mauritius, Meksika, Fas, Mozambik, Myanmar, Namibya, Hollanda, Hollanda Antilleri, Yeni Zelanda, Nikaragua, Nijerya, Norveç, Pakistan, Paraguay, Peru, Filipinler, Polonya, Portekiz, Romanya, Saint Lucia, St. Vincent ve Grenadinler, Senegal, Sierra Leone, Singapur, Slovakya, Slovenya, Güney Afrika, İspanya, Sri Lanka, Surinam, Esvatini, İsveç, İsviçre, Tanzanya, Tayland, Togo, Trinidad ve Tobago, Tunus, Türkiye, Uganda, Birleşik Krallık, ABD, Ukrayna, Uruguay, Venezuela, Zambiya, Zimbabve, Rusya, Karadağ, Tacikistan, Vanuatu, Yemen, Samoa, Moğolistan ve Laos Demokratik Halk Cumhuriyeti'dir.
+
+Yapı
+WTO'nun en yetkili birimi, WTO'ya üye ülke temsilcilerinden oluşan, iki yılda en az bir kez toplanan ve çok taraflı ticaret görüşmeleri ile ilgili sorunlarda karar vermekle yetkili olan, Bakanlar Konferansı'dır.
+WTO'nun günlük işlerini yürütmek üzere pek çok alt birim kurulmuştur. Bunlardan yine WTO üyelerinden oluşan Genel Konsey; Bakanlar Konferansına rapor vermekle sorumludur. Rutin işleri Bakanlar Konseyi adına yapan Genel Konsey, iki kısımdan oluşmaktadır. Bunlar; anlaşmazlık çözüm prosedürlerini idare eden, Anlaşmazlık Çözüm Organı (DSB) ve her bir WTO üyesinin ticaret politikalarını düzenli olarak değerlendiren, Ticaret Politikaları Değerlendirme Organı (TPRB)'dır.
+Genel Konsey sorumluluklarını, üç ana organa devretmiştir. Bunlar; Mal Ticareti Konseyi, Hizmet Ticareti Konseyi, Ticaretle İlgili Fikri Mülkiyet Hakları Konseyi'dir. Mal Ticareti Konseyi; her ne kadar her anlaşma kendi özel denetleme organına sahipse de, mal ticaretine konu olan anlaşmaların takibi ve uygulanmasını denetlemektedir. Diğer iki Konsey de kendi sorumluluk alanlarına giren anlaşmaların takibi ve uygulamasını denetlemekle sorumludurlar ve gerekli durumlarda kendi alt birimlerini kurmakla yetkilidirler.
+WTO Genel Konseyi, Anlaşmazlıkların Çözümü Organı (DSB) olarak toplanabilir ve Uruguay Round'u Nihai Senedi'nde yer alan herhangi bir anlaşmadan kaynaklanan, anlaşmazlıklarla ilgili olarak karar verir. Bu sebeple DSB, paneller kurmak, ceza vermek, verilen raporları yeniden görüşmek, karar ve tavsiyelerin uygulanmasının takibini yürütmek ve tavsiyelerin uygulanmaması durumunda, misilleme kararları vermekle yetkilidir.
+WTO anlaşmazlıkları önleme mekanizması, anlaşmazlığa taraf olanların her birine temyiz yoluna gitme imkânı tanımaktadır. Temyiz başvuruları DSB tarafından kurulan bir daimi Temyiz Organı tarafından cevaplandırılmaktadır. Bu Temyiz Organı WTO üyelerini temsil eden yedi kişiden oluşmaktadır ve dört yıl görevde kalmaktadır. Bu kişilerin, herhangi bir hükûmete bağlı olmamaları, hukuk ve uluslararası ticaret alanında tanınan, bilgili kişiler olmaları gerekmektedir.
+Cenevre'de bulunan WTO sekreterliği 450 personele sahiptir, bir Genel Müdür ve üç Genel Müdür Yardımcısı tarafından idare edilmektedir. Sekreterliğin gelişmekte olan ülkelere ve özellikle az gelişmiş ülkelere teknik yardım sağlamak gibi, özel bir sorumluluğu da bulunmaktadır. WTO ekonomistleri ve istatistikçileri, ticaret politikaları ve performansı hakkında araştırmalar yaparken; hukuk uzmanları, WTO kurallarının uygulanması ile ilgili ticaret anlaşmazlıklarının çözülmesi konularında çalışmaktadırlar. Sekreterliğin işlerinin pek çoğu yeni üyelerle anlaşmaların başlatılması ve üyelikle ilgili olarak hükûmetlere tavsiyelerde bulunmakla ilgilidir.
+WTO bütçesi 83 milyon USD'dır ve ülkelerin katkıları ticarette aldıkları paya göre belirlenmektedir. WTO bütçesinin bir kısmı Uluslararası Ticaret Merkezi (ITC)'ne gitmektedir.
+
+Eleştiriler
+Ayrıca bakınız
+Liberal uluslararası düzen
+
+== Kaynakça ==

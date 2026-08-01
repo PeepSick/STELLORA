@@ -1,0 +1,9 @@
+# Only the account(s) listed here can approve changes to protected branches
+# once branch protection is turned on in the GitHub repo settings (that
+# requires a pushed remote — see PROJELER.md Faz 6 notes).
+#
+# TODO: replace with your actual GitHub username before enabling branch
+# protection, e.g.:
+#   * @your-github-username
+
+* @TODO-set-leosis-github-username

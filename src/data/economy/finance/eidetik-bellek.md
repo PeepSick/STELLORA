@@ -1,0 +1,56 @@
+---
+title: Eidetik_bellek
+url: 
+tags: ["eidetik", "bellek", "fotoğrafik", "daha", "görsel", "hafıza", "veya", "gibi"]
+fetched_at: 2026-06-04T21:01:49.301Z
+source: hamdata
+sector: "economy"
+sub_sector: "finance"
+confidence: verified
+confidence_score: 0.779
+fusion_at: "2026-06-04T22:29:38.770Z"
+quality_layer: 2
+quality_score: 0.779
+quality_density: 0.803
+quality_vocab: 0.52
+sector_hint: culture
+---
+
+# Eidetik_bellek
+
+Eidetik hafıza (/aɪˈdɛtɪk/ eye-DET-ik, daha yaygın olarak fotoğrafik bellek olarak da adlandırılır) bir görüntüyü yalnızca bir kez gördükten sonra ve anımsatıcı bir cihaz kullanmadan kısa bir süre için yüksek hassasiyetle bellekten geri çağırma yeteneğidir. Eidetik bellek ve fotoğrafik bellek terimleri popüler olarak birbirinin yerine kullanılsa da, eidetik bellek, bir nesneyi artık yok olduktan sonra birkaç dakika boyunca görme yeteneğidir. Fotoğrafik bellek ise metin, sayı veya benzeri sayfaların çok ayrıntılı olarak hatırlanma yeteneğidir. Kavramlar ayırt edildiğinde, eidetik belleğin az sayıda çocukta meydana geldiği ve genellikle yetişkinlerde bulunmadığı bildirilirken gerçek fotoğrafik belleğin var olduğu hiçbir zaman kanıtlanmamıştır.
+Eidetik kelimesi Yunanca (εἶδος [êːdos], eidos olarak telaffuz edilir) ''görünür biçim'' kelimesinden gelmektedir.
+
+Eidetik veya fotoğrafik hafıza
+Eidetik bellek ve fotoğrafik bellek terimleri genellikle birbirinin yerine kullanılır, fakat aynı zamanda ayırt edici özellikleri de vardır. Annette Kujawski Taylor, "Eidetik hafızada, bir kişinin hafızasında gerçeğine sadık bir olayın anlık bir zihinsel görüntüsü veya fotoğrafı vardır. Bununla birlikte, eidetik bellek, belleğin yalnızca görsel yönleriyle sınırlı değildir. Görsel bir görüntü ile ilişkili çeşitli bir dizi uyaranın, duyusal yönlerinin yan sıra işitsel anıları da içerir. ‘’ Yazar Andrew Hudmon ise şu yorumu yaptı: ‘’ Fotoğrafik benzeri hafızaya sahip olan insan örnekleri nadirdir. Eidetik görüntü, bir görüntü hala algılanıyormuş gibi çok ayrıntılı, net ve doğru hatırlanmasıdır. Bozulmalara ve eklemelere (epizodik bellekte olduğu gibi) maruz kaldığı için mükemmel değildir ve bunun yanında seslendirme de belleğe müdahale eder.’’
+Bu yeteneğe sahip olanlar olarak adlandırılan "Eidetikerler", tarif ettiklerine göre görsel alanda gözleriyle görüntüyü tarar gibi canlı bir ardışık görüntü elde ettiklerini bildirdiler. Sıradan zihinsel imgelemenin aksine, Eidetik imgeler dışarıdan yansıtılır, zihinden ziyade ‘’dışarıda’’ olarak deneyimlenir. Görsel uyaranın kaldırılmasından sonra dakikalar içinde görüntünün canlılığı ve kararlılığı kaybolmaya başlar. Lilienfeld ve ark. ‘’Eidetik hafızaya sahip insanlar, görsel bir görüntüyü zihinlerinde o kadar net bir şekilde tutabilirler ki, doğruluk konusunda onu mükemmel veya neredeyse eksiksiz bir şekilde tanımlayabilirler.’'
+Buna karşılık, fotoğrafik bellek ise, metin, sayı veya benzeri sayfaları, görsel bellekle birlikte gelen görselleştirme olmadan çok ayrıntılı olarak hatırlama yeteneği olarak tanımlanabilir. Bir bilgi sayfasına kısaca baktıktan sonra onu mükemmel bir şekilde hafızadan okuma yeteneği olarak da tanımlanabilir. Bu tür bir yeteneğin varlığı hiçbir zaman kanıtlanmamıştır ve popüler bir efsane olarak kabul edilir.
+
+Yaygınlık
+Eidetik bellek, yetişkinlerde neredeyse hiç olmadığı için tipik olarak sadece küçük çocuklarda bulunur. Hudmon, ''Çocuklar, yetişkinlerden çok daha fazla eidetik imgeleme kapasitesine sahiptir, bu da gelişimsel bir değişikliğin (dil becerilerini kazanmak gibi) eidetik imgeleme potansiyelini bozabileceğini düşündürmektedir.'' demiştir. 6 ila 12 yaş arasındaki çocukların yüzde 2 ila 10' unda eidetik bellek bulunmuştur. Dil edinimi ve sözel becerilerin, daha büyük çocukların daha soyut düşünmelerine ve dolayısıyla görsel hafıza sistemlerine daha az güvenmelerine izin verdiği varsayılmıştır. Kapsamlı araştırmalar, eidetik görüntülerin varlığı ile herhangi bir bilişsel, entelektüel, nörolojik veya duygusal ölçü arasında tutarlı bir ilişki göstermeyi başaramadı.
+Birkaç yetişkinin olağanüstü hatıraları vardır (mutlaka görüntülerle ilgili değildir), ancak yetenekleri zeka seviyeleriyle bağlantılı değildir ve oldukça uzmanlaşmış olma eğilimindedir. Solomon Shereshevsky ve Kim Peek örneklerinde olduğu gibi, bazı aşırı durumlarda, hafıza becerilerinin sosyal becerileri engelleyebileceği bildiriliyor. Shereshevsky eidetik bir ezberleyici değil, eğitimli bir anımsatıcıydı. Kim Peek'in ise gerçek eidetik belleğe sahip olup olmadığını doğrulayan bir çalışma henüz yoktur.
+Herman Goldstine'e göre, matematikçi John von Neumann, okuduğu her kitabı hafızasından hatırlayabilme yeteneğine sahipti.
+
+Şüphecilik
+Eidetik belleğin varlığına ilişkin şüphecilik, 1970'lerde müstakbel eşi Elizabeth'i inceleyen Charles Stromeyer tarafından ortaya atıldı ve Charles, Elizabeth'in anlamadığı yabancı bir dilde yazılmış şiiri ilk kez gördükten yıllar sonra hatırlayabildiğini iddia etti. Ayrıca görünürde rastgele nokta desenlerini, bellekteki iki deseni stereoskopik bir görüntüde birleştirecek kadar aslına uygun olarak hatırlayabiliyordu. Elizabeth böyle bir testi geçtiği belgelenen tek kişi olmaya devam ediyor. Bununla birlikte, test prosedürlerinde kullanılan yöntemler (özellikle ileri sürülen iddiaların olağanüstü doğası göz önüne alındığında), ve araştırmacının deneğiyle evlenmiş olması durumu sorgulanabilir. Ek olarak, Slate dergisinde 2006'da yayınlanan ve bilinçsiz intihal vakalarına odaklanan bir makalede davayı takip eden gazeteci Joshua Foer için testlerin hiçbir zaman tekrarlanmaması (Elizabeth sürekli olarak onları tekrarlamayı reddetti), daha fazla endişe uyandırıyor. Ayrıca Joshua Foer Moonwalking with Einstein adlı kitabında, titizlikle bilimsel olarak test edilen insanlar arasında, uzun süreli eidetik belleğe sahip olduğunu iddia eden hiç kimsenin bu yeteneği kanıtlamadığını iddia ediyor.
+Amerikalı bilişsel bilim insanı Marvin Minsky ,The Society of Mind (1988) adlı kitabında, fotoğrafik hafıza raporlarını "asılsız bir efsane" olarak değerlendirdi ve eidetik görüntülerin doğası, doğru tanımı ve hatta çocuklarda görülüp görülmediği hakkında bilimsel bir fikir birliği olmadığını söyledi.
+Lilienfeld ve arkadaşları şöyle belirttiler: "Bazı psikologlar, eidetik hafızanın, bazı şanslı insanlarda ikonik görüntünün alışılmadık derecede uzun süre kalıcılığını yansıttığına inanıyor". Ve şunları eklediler: "Daha yeni kanıtlar, herhangi bir anının gerçekten fotoğrafik olup olmadığına dair soruları gündeme getiriyor (Rothen, Meier & Ward, 2012). Eidetikçilerin anıları açıkça dikkat çekicidir, ancak nadiren mükemmeldirler. Anıları genellikle küçük hatalar, orijinal görsel uyaranda bulunmayan bilgiler içerir. Bu nedenle, eidetik hafıza bile çoğu zaman yeniden yapılandırıcı görünmektedir".
+Bilimsel şüpheci yazar Brian Dunning, 2016 yılında hem eidetik hem de fotoğrafik bellek konusundaki literatürü gözden geçirdi ve "Sağlıklı yetişkinler arasında eidetik belleğin var olduğuna dair ikna edici kanıt eksikliği olmasının yanında fotoğrafik belleğin var olduğuna dair hiçbir kanıt yok" sonucuna vardı. Ancak bu araştırma makalelerinin çoğunda ortak bir tema var ve bu da sıradan bellek ile istisnai bellek arasındaki farkın bir derece farkı gibi görünmesi.''
+
+Eğitilmiş anımsatıcılar
+Fotoğrafik veya eidetik hafıza oluşturmak için görsel hatırlama; anımsatıcılar, uzman yetenek veya diğer bilişsel stratejiler kullanılmadan devam etmelidir. Bu tür becerilere dayanan ve yanlışlıkla fotoğrafik belleğe atfedilen çeşitli vakalar bildirilmiştir.
+Eidetik belleğe atfedilen olağanüstü bellek yeteneklerinin bir örneği, Adriaan de Groot'un satranç büyükustalarının bir satranç tahtasındaki satranç taşlarının karmaşık pozisyonlarını ezberleme yeteneğine ilişkin klasik deneylerinin popüler yorumlarından gelir. Başlangıçta, bu uzmanların, eidetik beceri izlenimi veren şaşırtıcı miktarda bilgiyi, uzman olmayanlardan çok daha fazla hatırlayabildiği bulundu. Ancak, uzmanlara satranç taşlarının düzenlemeleri bir oyunda asla gerçekleşemeyecek şekilde sunulduğunda, hatırlamaları uzman olmayanlardan daha iyi değildi, bu durum doğuştan gelen eidetik bir yeteneğe sahip olmaktan ziyade belirli türdeki bilgileri organize etme yeteneği geliştirdiklerini düşündürtü.
+Hipertimezi olarak bilinen bir duruma sahip olduğu belirlenen kişiler, kendi kişisel yaşamlarının çok karmaşık ayrıntılarını hatırlayabilirler, ancak bu yetenek, otobiyografik olmayan diğer bilgileri kapsamıyormuş gibi görünmüyor. [medical citation needed] Bu kişilerin yıllar önce kiminle birlikte oldukları, ne giydikleri, belirli bir tarihte nasıl hissettikleri gibi canlı hatıraları olabilir. Jill Price gibi incelenen hastalar, obsesif-kompulsif bozukluğu olanlara benzeyen beyin taramaları gösteriyor. Aslında, Price'ın olağandışı otobiyografik hafızası, zorunlu olarak günlük girişleri yapmanın bir yan ürünü olarak atfedilmiştir. Hipertimistik hastalarda ayrıca geçmişteki hoş olmayan anıları ve deneyimleri unutamamaktan kaynaklanan depresyon da olabilir. Hipertimezinin herhangi bir eidetik yeteneği akla getirmesi yanlış bir kanıdır.
+Her yıl Dünya Hafıza Şampiyonalarında dünyanın en iyi ezbercileri ödüller için yarışırlar. Dünyanın en rekabetçi ezbercilerinden hiç birinin fotoğrafik hafızası yoktur ve görsel veya fotoğrafik hafızası olduğu iddia edilen hiç kimse şampiyonluğu kazanmamıştır.
+
+Dikkate değer iddialar
+Sıradışı hafızası "eidetik" olarak etiketlenmiş birkaç kişi vardır, ancak anımsatıcıları ve diğer eidetic olmayan hafıza geliştirme yöntemlerini kullanıp kullanmadıkları kesin olarak belirlenmemiştir. Üç yaşında gerçekçi resimler çizmeye başlayan ve otizmi olan ‘Naida’ yakından incelenmiştir. Çocukluğu boyunca, erken gelişmiş hafızasından faydalanarak tekrarlayan çizimler üretti; baktığı bir görüntünün üzerinde farklı perspektifler gösteren- çocukların en erken ergenliğe kadar elde edemedikleri bir kazanım- çizimler yaptı. Örneğin, üç yaşındayken bir hikâye kitabında at resmi gördükten sonra, atlara takıntılı hale geldi ve bir atın herhangi bir duruşta nasıl görünmesi gerektiği üzerine çok sayıda resim üretti. Diğer hayvanları, nesneleri ya da insan vücudunun kısımlarını doğru bir biçimde çizebilirdi fakat insan yüzlerini karmakarışık formlar olarak temsil etti. Stephen Wiltshire bir özneye bir kez bakıp daha sonra, genellikle seyirci önünde, baktığı şeyin doğru ve ayrıntılı çizimini üretebilse ve tek, kısa helikopter gezilerine dayanarak tüm şehri hafızasından çizebilse de-New York şehrinin 305 mil karelik ve altı metrelik çizimi yirmi dakikalık bir helikopter yolculuğuna dayanır- diğerleri tam olarak test edilmemiştir. Daha az araştırılmış başka bir örnek, 1950'lerin Avusturyalı yerli sanatçısı Winnie Bamara'nın sanatıdır. sanatıdır.
+
+Ayrıca bakınız
+Ayumu – Kısa süreli hafıza testlerindeki performansı üniversite öğrencilerinden daha yüksek olan bir şempanze
+Görsel bellek - Görsel deneyime ilişkin duyularımızın bazı özelliklerini koruyan bir bellek biçimi
+Funes the Memorious – Jorge Luis Borges'in eidetik belleğin sonuçlarını tartışan kısa öyküsü
+Her şeyi bilme - Özellikle Budizmde ustaların ‘’üç zamanı (geçmiş, şimdi, gelecek)’' da bilme kapasitesi kazanması
+Sinaptik plastisite - Bir sinapsın gücünün değişme yeteneği
+
+== Kaynakça ==
