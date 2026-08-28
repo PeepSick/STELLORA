@@ -6,7 +6,7 @@ export const CinematicIntro: React.FC<{ onComplete: () => void }> = ({ onComplet
   const [isVisible, setIsVisible] = useState(true);
 
   const steps = [
-    'LEOSIS INITIALIZING UNIVERSE...',
+    'STELLORA INITIALIZING UNIVERSE...',
     'LOADING 380,000 STELLAR CLUSTERS...',
     'SYNCHRONIZING KNOWLEDGE GRAPH...',
     'READY',
@@ -45,9 +45,9 @@ export const CinematicIntro: React.FC<{ onComplete: () => void }> = ({ onComplet
           <div className="absolute w-8 h-8 rounded-full bg-white shadow-[0_0_30px_rgba(255,255,255,1)]" />
         </div>
 
-        {/* Leosis Title */}
+        {/* Stellora Title */}
         <h1 className="text-xl font-bold tracking-[0.3em] text-white font-mono mb-2">
-          LEOSIS OS
+          STELLORA OS
         </h1>
 
         {/* Progress Step Subtitle */}

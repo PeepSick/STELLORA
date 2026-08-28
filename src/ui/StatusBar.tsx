@@ -45,7 +45,7 @@ export const StatusBar: React.FC = () => {
       {/* Left: OS Status */}
       <div className="flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-        <span className="text-slate-300 font-semibold tracking-wider">LEOSIS OS v2.7.1</span>
+        <span className="text-slate-300 font-semibold tracking-wider">STELLORA OS v2.7.1</span>
         <span className="text-slate-500">•</span>
         <span className="text-emerald-400 tracking-wider">CONNECTED</span>
       </div>

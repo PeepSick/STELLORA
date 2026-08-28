@@ -1,10 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import { X, Star, Heart, Clock, RotateCcw, Eye, EyeOff, LayoutDashboard, KeyRound } from 'lucide-react';
+import { X, Star, Heart, Clock, RotateCcw, Eye, EyeOff, LayoutDashboard, KeyRound, Sparkles, Palette, Languages } from 'lucide-react';
 import { useStellarisStore } from '@/store';
 import { NODE_VISUALS } from '@/types';
-import type { StellarisNode, StellorMemoryMetadata, AiProviderId } from '@/types';
+import type { StellarisNode, StellorMemoryMetadata, AiProviderId, FeatureSettings, ThemePreset, LanguageMode } from '@/types';
 import { readStellorMemory, writeStellorMark } from '@/hooks/useStellorMemory';
 import { useAiConfig, AI_PROVIDER_LABELS } from '@/hooks/useAiConfig';
+import { useTranslation } from '@/i18n';
+import { exportGalaxy, importGalaxyFile, readStellorMarks, readAiConfig, STELLOR_MARK_PREFIX } from '@/services/exportImport';
+import type { GalaxyExport } from '@/services/exportImport';
+import { fetchGitHubCommits } from '@/services/gitHub';
 
 function isMemoryNode(node: StellarisNode): boolean {
   return Array.isArray((node.metadata as any)?.photos);
@@ -334,19 +338,70 @@ const ArchiveContent: React.FC = () => {
 
 const PROVIDERS: AiProviderId[] = ['claude', 'openai', 'deepseek', 'zai', 'custom'];
 
+type FeatureFlagKey = keyof FeatureSettings;
+
+const FEATURE_FLAGS: { key: FeatureFlagKey; labelKey: 'featFinance3D' | 'featTimeline' | 'featMusic' | 'featGit' | 'featCollab' | 'featExport'; descKey: 'featFinance3DDesc' | 'featTimelineDesc' | 'featMusicDesc' | 'featGitDesc' | 'featCollabDesc' | 'featExportDesc' }[] = [
+  { key: 'showFinance3D', labelKey: 'featFinance3D', descKey: 'featFinance3DDesc' },
+  { key: 'timelineView', labelKey: 'featTimeline', descKey: 'featTimelineDesc' },
+  { key: 'musicGalaxy', labelKey: 'featMusic', descKey: 'featMusicDesc' },
+  { key: 'gitGalaxy', labelKey: 'featGit', descKey: 'featGitDesc' },
+  { key: 'collaborativeMode', labelKey: 'featCollab', descKey: 'featCollabDesc' },
+  { key: 'exportImport', labelKey: 'featExport', descKey: 'featExportDesc' },
+];
+
+const ToggleRow: React.FC<{ label: string; desc: string; checked: boolean; onChange: (v: boolean) => void }> = ({ label, desc, checked, onChange }) => (
+  <button
+    onClick={() => onChange(!checked)}
+    className="w-full flex items-center justify-between gap-3 bg-black/20 rounded-xl border border-white/5 px-3 py-2.5 text-left hover:border-white/15 transition-colors"
+  >
+    <span className="min-w-0">
+      <span className="block text-[11px] text-slate-200 font-medium">{label}</span>
+      <span className="block text-[9px] text-slate-500 leading-snug">{desc}</span>
+    </span>
+    <span className={`shrink-0 w-9 h-5 rounded-full flex items-center px-0.5 transition-colors ${checked ? 'bg-purple-500/70' : 'bg-white/10'}`}>
+      <span className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
+    </span>
+  </button>
+);
+
 const SettingsContent: React.FC = () => {
-  const { activeProvider, activeSettings, providers, isConfigured, setActiveProvider, updateProviderSettings } = useAiConfig();
+  const { activeProvider, activeSettings, isConfigured, setActiveProvider, updateProviderSettings } = useAiConfig();
+  const features = useStellarisStore((s) => s.features);
+  const updateFeatures = useStellarisStore((s) => s.updateFeatures);
+  const nodes = useStellarisStore((s) => s.nodes);
+  const connections = useStellarisStore((s) => s.connections);
+  const setAiActiveProvider = useStellarisStore((s) => s.setAiActiveProvider);
+  const updateAiProviderSettings = useStellarisStore((s) => s.updateAiProviderSettings);
+  const setNodes = useStellarisStore((s) => s.setNodes);
+  const setConnections = useStellarisStore((s) => s.setConnections);
+  const setGitNodes = useStellarisStore((s) => s.setGitNodes);
+  const setGitConnections = useStellarisStore((s) => s.setGitConnections);
+  const { t } = useTranslation();
   const [showKey, setShowKey] = useState(false);
+  const [importMsg, setImportMsg] = useState<string>('');
+  const [repoUrl, setRepoUrl] = useState<string>('');
+  const [gitStatus, setGitStatus] = useState<string>('');
+
+  const THEMES: { value: ThemePreset; labelKey: 'themeDark' | 'themeLight' | 'themeAurora' | 'themeCustom' }[] = [
+    { value: 'dark', labelKey: 'themeDark' },
+    { value: 'light', labelKey: 'themeLight' },
+    { value: 'aurora', labelKey: 'themeAurora' },
+    { value: 'custom', labelKey: 'themeCustom' },
+  ];
+  const LANGS: { value: LanguageMode; labelKey: 'langAuto' | 'langEn' | 'langTr' }[] = [
+    { value: 'auto', labelKey: 'langAuto' },
+    { value: 'en', labelKey: 'langEn' },
+    { value: 'tr', labelKey: 'langTr' },
+  ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <section>
         <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-          <KeyRound size={10} /> AI SAĞLAYICI (kendi API key'in)
+          <KeyRound size={10} /> AI PROVIDER (bring-your-own-key)
         </h4>
         <p className="text-[10px] text-slate-500 leading-relaxed mb-2">
-          Bu bir backend'i olmayan istemci uygulaması — girdiğin key sadece bu tarayıcıda saklanır ve
-          doğrudan seçtiğin sağlayıcıya gönderilir, başka hiçbir yere gitmez.
+          {t('settings')}: client-only — your key stays in this browser and is sent straight to the provider.
         </p>
         <div className="grid grid-cols-5 gap-1 mb-3">
           {PROVIDERS.map((p) => (
@@ -407,9 +462,166 @@ const SettingsContent: React.FC = () => {
 
         <div className={`mt-2 text-[10px] flex items-center gap-1.5 ${isConfigured ? 'text-emerald-400' : 'text-slate-500'}`}>
           <span className={`w-1.5 h-1.5 rounded-full ${isConfigured ? 'bg-emerald-400' : 'bg-slate-600'}`} />
-          {isConfigured ? `${AI_PROVIDER_LABELS[activeProvider]} hazır — orb'a tıklayıp chat açabilirsin` : 'Henüz yapılandırılmadı'}
+          {isConfigured ? `${AI_PROVIDER_LABELS[activeProvider]} ready — click an orb to chat` : 'Not configured yet'}
         </div>
       </section>
+
+      <section>
+        <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+          <Sparkles size={10} /> {t('settingsFeatures')}
+        </h4>
+        <div className="space-y-1.5">
+          {FEATURE_FLAGS.map((f) => (
+            <ToggleRow
+              key={f.key}
+              label={t(f.labelKey)}
+              desc={t(f.descKey)}
+              checked={features[f.key] as boolean}
+              onChange={(v) => updateFeatures({ [f.key]: v } as Partial<FeatureSettings>)}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+          <Palette size={10} /> {t('settingsAppearance')}
+        </h4>
+        <div className="space-y-3">
+          <div>
+            <label className="text-[9px] text-slate-500 uppercase tracking-wider">{t('settingsTheme')}</label>
+            <div className="grid grid-cols-4 gap-1.5 mt-1.5">
+              {THEMES.map((th) => (
+                <button
+                  key={th.value}
+                  onClick={() => updateFeatures({ themePreset: th.value })}
+                  className={`h-8 rounded-lg text-[9px] font-bold uppercase tracking-wide border transition-all ${
+                    features.themePreset === th.value
+                      ? 'bg-purple-500/20 border-purple-400/60 text-purple-200'
+                      : 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {t(th.labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="text-[9px] text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Languages size={10} /> {t('settingsLanguage')}
+            </label>
+            <div className="grid grid-cols-3 gap-1.5 mt-1.5">
+              {LANGS.map((l) => (
+                <button
+                  key={l.value}
+                  onClick={() => updateFeatures({ language: l.value })}
+                  className={`h-8 rounded-lg text-[9px] font-bold uppercase tracking-wide border transition-all ${
+                    features.language === l.value
+                      ? 'bg-purple-500/20 border-purple-400/60 text-purple-200'
+                      : 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {t(l.labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {features.exportImport && (
+        <section>
+          <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <Sparkles size={10} /> {t('settingsData')}
+          </h4>
+          <div className="grid grid-cols-2 gap-1.5">
+            <button
+              onClick={() =>
+                exportGalaxy({
+                  nodes,
+                  connections,
+                  features,
+                  aiConfig: readAiConfig(),
+                  stellorMarks: readStellorMarks(),
+                })
+              }
+              className="h-9 rounded-lg bg-white/5 border border-white/10 text-[10px] font-bold text-slate-200 uppercase tracking-wide hover:bg-white/10"
+            >
+              {t('exportJson')}
+            </button>
+            <label className="h-9 rounded-lg bg-white/5 border border-white/10 text-[10px] font-bold text-slate-200 uppercase tracking-wide hover:bg-white/10 flex items-center justify-center cursor-pointer">
+              {t('importJson')}
+              <input
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  try {
+                    const data: GalaxyExport = await importGalaxyFile(file);
+                    setNodes(data.nodes.map((n) => ({ ...n, position: n.position })));
+                    setConnections(data.connections);
+                    if (data.features) updateFeatures(data.features);
+                    if (data.aiConfig) {
+                      setAiActiveProvider(data.aiConfig.activeProvider);
+                      (Object.keys(data.aiConfig.providers) as AiProviderId[]).forEach((p) =>
+                        updateAiProviderSettings(p, data.aiConfig!.providers[p])
+                      );
+                    }
+                    if (data.stellorMarks) {
+                      Object.entries(data.stellorMarks).forEach(([key, value]) => {
+                        const id = key.startsWith(STELLOR_MARK_PREFIX) ? key.slice(STELLOR_MARK_PREFIX.length) : key;
+                        writeStellorMark(id, (value || null) as any);
+                      });
+                    }
+                    setImportMsg('Imported ✓');
+                  } catch {
+                    setImportMsg('Invalid file');
+                  }
+                  setTimeout(() => setImportMsg(''), 2500);
+                }}
+              />
+            </label>
+          </div>
+          {importMsg && <p className="text-[10px] text-emerald-400 mt-1.5">{importMsg}</p>}
+        </section>
+      )}
+
+      {features.gitGalaxy && (
+        <section>
+          <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <Sparkles size={10} /> {t('featGit')}
+          </h4>
+          <p className="text-[9px] text-slate-500 leading-relaxed mb-1.5">{t('featGitDesc')}</p>
+          <div className="flex items-center gap-1.5">
+            <input
+              type="text"
+              value={repoUrl}
+              onChange={(e) => setRepoUrl(e.target.value)}
+              placeholder={t('gitPlaceholder')}
+              className="flex-1 bg-black/30 border border-white/10 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50 font-mono"
+            />
+            <button
+              onClick={async () => {
+                setGitStatus('…');
+                try {
+                  const { nodes, connections } = await fetchGitHubCommits(repoUrl);
+                  setGitNodes(nodes);
+                  setGitConnections(connections);
+                  setGitStatus(`${nodes.length} commits`);
+                } catch (e: any) {
+                  setGitStatus(e?.message ?? 'Error');
+                }
+              }}
+              className="h-8 px-3 rounded-lg bg-purple-500/20 border border-purple-400/50 text-[10px] font-bold text-purple-200 hover:bg-purple-500/30"
+            >
+              {t('gitFetch')}
+            </button>
+          </div>
+          {gitStatus && <p className="text-[10px] text-slate-400 mt-1.5">{gitStatus}</p>}
+        </section>
+      )}
     </div>
   );
 };

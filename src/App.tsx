@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { StellarisGalaxy } from './StellarisGalaxy';
 import { mockNodes, mockConnections, financeSearchIndex } from '@/data/mockNodes';
 import { loadGalleryNodesAndConnections } from '@/data/loadGalleryData';
+import { loadMusicNodes } from '@/data/loadMusicData';
 import { useStellarisStore } from '@/store';
 import type { StellarisNode, StellarisConnection } from '@/types';
 import './index.css';
@@ -16,6 +17,8 @@ import './index.css';
  */
 export default function App() {
   const galaxyProvider = useStellarisStore((s) => s.galaxyProvider);
+  const showMusic = useStellarisStore((s) => s.features.musicGalaxy);
+  const setMusicNodes = useStellarisStore((s) => s.setMusicNodes);
   const [galleryData, setGalleryData] = useState<{ nodes: StellarisNode[]; connections: StellarisConnection[] } | null>(null);
 
   useEffect(() => {
@@ -23,6 +26,13 @@ export default function App() {
       loadGalleryNodesAndConnections().then(setGalleryData);
     }
   }, [galaxyProvider, galleryData]);
+
+  // Music Galaxy: auto-discover local audio files and push them into the store
+  // when the feature is enabled (galery-style auto-loading).
+  useEffect(() => {
+    if (showMusic) setMusicNodes(loadMusicNodes());
+    else setMusicNodes([]);
+  }, [showMusic, setMusicNodes]);
 
   const handleNodeSelect = (node: StellarisNode) => {
     console.log('[Stellora] Node selected:', node.title, node);

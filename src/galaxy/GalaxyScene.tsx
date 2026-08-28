@@ -8,6 +8,7 @@ import { ParticleSystem } from './ParticleSystem';
 import { CameraRig } from './CameraRig';
 import { OrbitRings } from './OrbitRings';
 import { GalaxyPresence } from './GalaxyPresence';
+import { TimelineAxis } from './TimelineAxis';
 import { useStellarisStore } from '@/store';
 
 export const GalaxyScene: React.FC = React.memo(() => {
@@ -30,6 +31,7 @@ export const GalaxyScene: React.FC = React.memo(() => {
       <ParticleSystem />
       <GalaxyPresence />
       <ConnectionLines />
+      <TimelineAxis />
       <KnowledgeNodes />
     </>
   );

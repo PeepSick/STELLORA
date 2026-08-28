@@ -8,8 +8,22 @@ import type {
   DockTabId,
   AiProviderId,
   AiProviderSettings,
+  FeatureSettings,
 } from '@/types';
-import { DEFAULT_GALAXY_SETTINGS } from '@/types';
+import { DEFAULT_GALAXY_SETTINGS, DEFAULT_FEATURE_SETTINGS } from '@/types';
+
+const FEATURES_STORAGE_KEY = 'stellora-features';
+
+function readFeatures(): FeatureSettings {
+  try {
+    const raw = localStorage.getItem(FEATURES_STORAGE_KEY);
+    if (raw) return { ...DEFAULT_FEATURE_SETTINGS, ...JSON.parse(raw) };
+  } catch {
+    /* corrupt storage — fall back to defaults */
+  }
+  return { ...DEFAULT_FEATURE_SETTINGS };
+}
+const INITIAL_FEATURES = readFeatures();
 
 // Re-import defaults as values
 const CONFIG_DEFAULTS: StellarisConfig = {
@@ -68,6 +82,14 @@ interface StellarisStore {
   connections: StellarisConnection[];
   // Searchable but not spatially rendered (e.g. large reference corpora like economy/finance)
   searchIndex: StellarisNode[];
+  // Optional external node sources (Music/Git galaxies) — merged into the spatial
+  // graph only when their feature flag is on (see StellarisGalaxy).
+  musicNodes: StellarisNode[];
+  gitNodes: StellarisNode[];
+  gitConnections: StellarisConnection[];
+  setMusicNodes: (nodes: StellarisNode[]) => void;
+  setGitNodes: (nodes: StellarisNode[]) => void;
+  setGitConnections: (connections: StellarisConnection[]) => void;
   selectedNodeId: string | null;
   hoveredNodeId: string | null;
   filteredType: string | null;
@@ -105,6 +127,11 @@ interface StellarisStore {
   galaxy: GalaxySettings;
   updateGalaxy: (partial: Partial<GalaxySettings>) => void;
   resetGalaxy: () => void;
+
+  // Feature flags (Phase 0) — every optional feature is toggleable from Settings
+  features: FeatureSettings;
+  updateFeatures: (partial: Partial<FeatureSettings>) => void;
+  resetFeatures: () => void;
 
   // UI
   isSearchOpen: boolean;
@@ -147,6 +174,12 @@ export const useStellarisStore = create<StellarisStore>((set, get) => ({
   nodes: [],
   connections: [],
   searchIndex: [],
+  musicNodes: [],
+  gitNodes: [],
+  gitConnections: [],
+  setMusicNodes: (musicNodes) => set({ musicNodes }),
+  setGitNodes: (gitNodes) => set({ gitNodes }),
+  setGitConnections: (gitConnections) => set({ gitConnections }),
   selectedNodeId: null,
   hoveredNodeId: null,
   filteredType: null,
@@ -226,6 +259,18 @@ export const useStellarisStore = create<StellarisStore>((set, get) => ({
   updateGalaxy: (partial) =>
     set((s) => ({ galaxy: { ...s.galaxy, ...partial } })),
   resetGalaxy: () => set({ galaxy: { ...GALAXY_DEFAULTS } }),
+
+  // ─── Feature flags (Phase 0) ───
+  features: { ...INITIAL_FEATURES },
+  updateFeatures: (partial) => {
+    const features = { ...get().features, ...partial };
+    set({ features });
+    localStorage.setItem(FEATURES_STORAGE_KEY, JSON.stringify(features));
+  },
+  resetFeatures: () => {
+    set({ features: { ...DEFAULT_FEATURE_SETTINGS } });
+    localStorage.setItem(FEATURES_STORAGE_KEY, JSON.stringify(DEFAULT_FEATURE_SETTINGS));
+  },
 
   // ─── UI ───
   isSearchOpen: false,

@@ -3,7 +3,10 @@ import { Search, SlidersHorizontal, Crown, Gem, Bell, Menu } from 'lucide-react'
 import { useStellarisStore } from '@/store';
 
 export const TopHeader: React.FC = () => {
-  const { toggleSearch } = useStellarisStore();
+  const { toggleSearch, toggleChat, setActiveDockTab, activeDockTab } = useStellarisStore();
+
+  const openPanel = (tab: 'dashboard' | 'orbs' | 'settings') =>
+    setActiveDockTab(activeDockTab === tab ? 'galaxy' : tab);
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 z-40 px-6 flex items-center justify-between bg-gradient-to-b from-[#070811]/90 via-[#070811]/50 to-transparent backdrop-blur-[2px]">
@@ -19,7 +22,7 @@ export const TopHeader: React.FC = () => {
         
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-sm font-bold tracking-[0.2em] text-white font-mono">LEOSIS</h1>
+            <h1 className="text-sm font-bold tracking-[0.2em] text-white font-mono">STELLORA</h1>
           </div>
           <p className="text-[10px] tracking-[0.15em] text-slate-400 uppercase font-mono">GALAXY CORE SYSTEM</p>
         </div>
@@ -42,24 +45,43 @@ export const TopHeader: React.FC = () => {
         <span className="text-xs text-slate-400 group-hover:text-slate-100 flex-1 truncate font-mono tracking-wide transition-colors">
           Search stars, systems, objects...
         </span>
-        <button className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
+        <button
+          onClick={(e) => { e.stopPropagation(); openPanel('settings'); }}
+          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+        >
           <SlidersHorizontal size={13} />
         </button>
       </div>
 
       {/* Right: Status Action Icons */}
       <div className="flex items-center gap-2">
-        <button className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-amber-300 hover:text-amber-200 hover:shadow-[0_0_12px_rgba(252,211,77,0.2)] transition-all">
+        <button
+          title="AI Chat"
+          onClick={toggleChat}
+          className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-amber-300 hover:text-amber-200 hover:shadow-[0_0_12px_rgba(252,211,77,0.2)] transition-all"
+        >
           <Crown size={16} />
         </button>
-        <button className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_12px_rgba(101,215,255,0.2)] transition-all">
+        <button
+          title="Orbs"
+          onClick={() => openPanel('orbs')}
+          className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-cyan-400 hover:text-cyan-300 hover:shadow-[0_0_12px_rgba(101,215,255,0.2)] transition-all"
+        >
           <Gem size={16} />
         </button>
-        <button className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-slate-300 hover:text-white transition-all relative">
+        <button
+          title="Dashboard"
+          onClick={() => openPanel('dashboard')}
+          className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-slate-300 hover:text-white transition-all relative"
+        >
           <Bell size={16} />
           <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
         </button>
-        <button className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-slate-300 hover:text-white transition-all">
+        <button
+          title="Settings"
+          onClick={() => openPanel('settings')}
+          className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-slate-300 hover:text-white transition-all"
+        >
           <Menu size={16} />
         </button>
       </div>

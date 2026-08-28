@@ -17,64 +17,13 @@ const photoModules = import.meta.glob('/src/data/galery/*.{jpg,jpeg,png}', {
  * No automated face/identity recognition — person counts only, no identity
  * claims (see PROJELER.md).
  */
-const PHOTO_NOTES: Record<string, { scene: string; tags: string[]; peopleObserved: number }> = {
-  '20160814_213918.jpg': {
-    scene: 'İç mekan, pencere kenarı, sıcak gündüz ışığı — iki kişilik selfie.',
-    tags: ['indoor', 'window-light', 'selfie'],
-    peopleObserved: 2,
-  },
-  '20161202_210047.jpg': {
-    scene: 'Gece, renkli (pembe/amber) atmosfer ışıklandırmalı bir mekan — iki kişilik selfie.',
-    tags: ['indoor', 'night', 'venue', 'selfie'],
-    peopleObserved: 2,
-  },
-  '20190817_201626.jpg': {
-    scene: 'Araç içi, gündüz — sürücü koltuğunda, dışarıda yeşillik ve çit görünüyor.',
-    tags: ['car', 'daytime', 'driving'],
-    peopleObserved: 1,
-  },
-  '20190818_013852.jpg': {
-    scene: 'İç mekan, merdiven/jaluzi arka planı — iki kişilik gülümseyen selfie.',
-    tags: ['indoor', 'staircase', 'selfie'],
-    peopleObserved: 2,
-  },
-  '20190818_013857.jpg': {
-    scene: 'Aynı iç mekan (merdiven/jaluzi), yakın çekim iki kişilik selfie.',
-    tags: ['indoor', 'staircase', 'selfie', 'close-up'],
-    peopleObserved: 2,
-  },
-  '20190819_132508.jpg': {
-    scene: 'Dış mekan, güneşli gün — bir araç yolunda iki araç, kırmızı kiremitli Avrupa mimarisi evler.',
-    tags: ['outdoor', 'cars', 'architecture', 'daytime'],
-    peopleObserved: 0,
-  },
-  '20190819_192251.jpg': {
-    scene: 'Dış mekan, akşam altın saat ışığı — bahçe/veranda, demir dökme mobilyalar, kırmızı çatılı evler arka planda.',
-    tags: ['outdoor', 'golden-hour', 'garden', 'selfie'],
-    peopleObserved: 1,
-  },
-  '20190824_182743.jpg': {
-    scene: 'Dış mekan, güneşli — bir araç yanında, araç yolu, kırmızı çatılı evler arka planda.',
-    tags: ['outdoor', 'car', 'daytime'],
-    peopleObserved: 1,
-  },
-  '20191012_135556.jpg': {
-    scene: 'İç mekan, düz duvar arka planı — iki kişilik yakın selfie.',
-    tags: ['indoor', 'selfie', 'close-up'],
-    peopleObserved: 2,
-  },
-};
+// Optional per-photo overrides — leave empty or add entries for specific files.
+// Any photo without an entry here gets dynamic defaults based on filename/time.
+const PHOTO_NOTES: Record<string, { scene: string; tags: string[]; peopleObserved: number }> = {};
 
-/** One-line hand-written synthesis per day — not live-generated (see Phase 2 in PROJELER.md). */
-const DAY_SUMMARIES: Record<string, string> = {
-  '2016-08-14': 'Sıcak bir öğleden sonra, pencere kenarında iki kişilik bir an.',
-  '2016-12-02': 'Gece, renkli ışıklar altında bir mekanda geçen an.',
-  '2019-08-17': 'Araç içinde, yeşilliklerin arasında sakin bir gündüz anı.',
-  '2019-08-18': 'İç mekanda, merdiven başında geçen gülümseyen bir an.',
-  '2019-08-19': 'Güneşli bir gün — yeni bir araç ve akşamüstü bahçede huzurlu bir vakit.',
-  '2019-08-24': 'Güneşli bir günde, araç yanında geçen kısa bir an.',
-  '2019-10-12': 'İç mekanda yakın çekim, samimi bir an.',
-};
+// Optional per-day summary overrides — empty by default.
+// Any day without an entry gets a dynamic summary from the photo scene data.
+const DAY_SUMMARIES: Record<string, string> = {};
 
 /** Parses the Android camera filename convention YYYYMMDD_HHMMSS as a fallback when EXIF has no date. */
 function dateFromFilename(filename: string): string | null {
@@ -90,7 +39,11 @@ function dayKeyFromIso(iso: string): string {
 
 async function buildPhotoMeta(filepath: string, url: string): Promise<{ dayKey: string; meta: StellorPhotoMetadata }> {
   const filename = filepath.split('/').pop() || 'photo.jpg';
-  const notes = PHOTO_NOTES[filename] ?? { scene: 'Galeri fotoğrafı.', tags: [], peopleObserved: 0 };
+  const notes = PHOTO_NOTES[filename] ?? {
+    scene: `Fotoğraf — ${filename}`,
+    tags: [],
+    peopleObserved: 0,
+  };
 
   let dateTaken: string | null = null;
   let camera: string | null = null;
@@ -177,7 +130,8 @@ export async function loadGalleryNodesAndConnections(): Promise<{
       : new Date(dayKey).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 
     const peopleObserved = photos.reduce((max, p) => Math.max(max, p.peopleObserved), 0);
-    const daySummary = DAY_SUMMARIES[dayKey] ?? (photos[0]?.scene || 'Galeri anısı.');
+    const daySummary = DAY_SUMMARIES[dayKey]
+      ?? `${dateLabel} — ${photos.length} fotoğraf çekildi.`;
 
     const metadata: StellorMemoryMetadata = {
       dayKey,

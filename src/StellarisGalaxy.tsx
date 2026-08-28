@@ -12,9 +12,12 @@ import { StatusBar } from '@/ui/StatusBar';
 import { CinematicIntro } from '@/ui/CinematicIntro';
 import { useKeyboard } from '@/hooks/useKeyboard';
 import { useIdleDetection } from '@/hooks/useIdleDetection';
+import { useCollabSync } from '@/hooks/useCollab';
+import { useAudioEngine } from '@/hooks/useAudioEngine';
 import { useStellarisStore } from '@/store';
 import { calculateNodePositions } from '@/utils/galaxyMath';
-import type { StellarisGalaxyProps } from '@/types';
+import { applyTheme } from '@/utils/themes';
+import type { StellarisGalaxyProps, StellarisNode } from '@/types';
 
 /**
  * StellarisGalaxy — Main exported component
@@ -47,27 +50,48 @@ export function StellarisGalaxy({
     isChatOpen,
   } = useStellarisStore();
 
+  const showFinance3D = useStellarisStore((s) => s.features.showFinance3D);
+  const showMusic = useStellarisStore((s) => s.features.musicGalaxy);
+  const showGit = useStellarisStore((s) => s.features.gitGalaxy);
+  const musicNodes = useStellarisStore((s) => s.musicNodes);
+  const gitNodes = useStellarisStore((s) => s.gitNodes);
+  const themePreset = useStellarisStore((s) => s.features.themePreset);
+
   const [showIntro, setShowIntro] = useState(true);
 
   useKeyboard();
   useIdleDetection();
+  useCollabSync();
+  useAudioEngine();
 
   useEffect(() => {
-    const positionedNodes = calculateNodePositions(nodes);
+    // Merge optional node sources into the spatial graph based on their flags.
+    // Finance: shrink + drop internal links (avoids whiteout). Music/Git: as-is.
+    const extra: StellarisNode[] = [];
+    if (showFinance3D) {
+      extra.push(...searchIndexNodes.map((n) => ({ ...n, connections: [], size: 0.5, importance: 1 })));
+    }
+    if (showMusic) extra.push(...musicNodes);
+    if (showGit) extra.push(...gitNodes);
+    const toRender = extra.length ? [...nodes, ...extra] : nodes;
+    const positionedNodes = calculateNodePositions(toRender);
     setNodes(positionedNodes);
-  }, [nodes, setNodes]);
+  }, [nodes, searchIndexNodes, musicNodes, gitNodes, showFinance3D, showMusic, showGit, setNodes]);
 
   useEffect(() => {
-    setConnections(connections);
-  }, [connections, setConnections]);
-
-  useEffect(() => {
-    setSearchIndex(searchIndexNodes);
-  }, [searchIndexNodes, setSearchIndex]);
+    // Finance nodes live in `nodes` (spatial) when the feature is on, so keep
+    // them out of the search-only index to avoid duplicates there.
+    setSearchIndex(showFinance3D ? [] : searchIndexNodes);
+  }, [searchIndexNodes, showFinance3D, setSearchIndex]);
 
   useEffect(() => {
     if (config) setConfig(config);
   }, [config, setConfig]);
+
+  // Theme engine — apply the selected preset whenever it changes (Phase 3)
+  useEffect(() => {
+    applyTheme(themePreset);
+  }, [themePreset]);
 
   useEffect(() => {
     setFullscreen(fullscreen);
@@ -108,17 +132,17 @@ export function StellarisGalaxy({
         )}
 
         {/* Left Control Panel (Galaxy Controls & Presets) */}
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto left-panel-wrapper">
           <ControlPanel />
         </div>
 
         {/* Right Top Overview Panel */}
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto right-panel-wrapper">
           <OverviewPanel />
         </div>
 
         {/* Right Bottom Unified Context & Node Details Panel */}
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto right-panel-wrapper">
           <ContextPanel />
         </div>
 

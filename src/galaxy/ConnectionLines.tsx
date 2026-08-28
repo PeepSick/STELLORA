@@ -3,13 +3,13 @@ import * as THREE from 'three';
 import { useStellarisStore } from '@/store';
 
 export const ConnectionLines: React.FC = React.memo(() => {
-  const { connections, nodes, galaxy, hoveredNodeId, selectedNodeId } = useStellarisStore();
+  const { connections, gitConnections, nodes, galaxy, hoveredNodeId, selectedNodeId } = useStellarisStore();
   const showConnections = galaxy?.showConnections ?? true;
 
   const lines = useMemo(() => {
     if (!showConnections) return [];
     
-    return connections.map((conn, idx) => {
+    return [...connections, ...gitConnections].map((conn, idx) => {
       const source = nodes.find(n => n.id === conn.source);
       const target = nodes.find(n => n.id === conn.target);
       if (!source || !target || !source.position || !target.position) return null;
@@ -40,7 +40,7 @@ export const ConnectionLines: React.FC = React.memo(() => {
         isSelectedConn,
       };
     }).filter((l): l is NonNullable<typeof l> => l !== null);
-  }, [connections, nodes, showConnections, hoveredNodeId, selectedNodeId]);
+  }, [connections, gitConnections, nodes, showConnections, hoveredNodeId, selectedNodeId]);
 
   if (!showConnections) return null;
 

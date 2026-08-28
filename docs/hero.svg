@@ -1,0 +1,63 @@
+<svg width="1200" height="400" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#161a33"/>
+      <stop offset="55%" stop-color="#0a0b18"/>
+      <stop offset="100%" stop-color="#04050a"/>
+    </radialGradient>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="35%" stop-color="#FFD27D"/>
+      <stop offset="100%" stop-color="#A88BFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#65D7FF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="400" fill="url(#bg)"/>
+
+  <!-- Stars -->
+  <g fill="#ffffff">
+    <circle cx="90" cy="60" r="1.4" opacity="0.9"/>
+    <circle cx="170" cy="320" r="1.1" opacity="0.7"/>
+    <circle cx="300" cy="90" r="1.6" opacity="0.8"/>
+    <circle cx="520" cy="50" r="1.0" opacity="0.6"/>
+    <circle cx="640" cy="350" r="1.3" opacity="0.8"/>
+    <circle cx="820" cy="110" r="1.5" opacity="0.7"/>
+    <circle cx="960" cy="300" r="1.1" opacity="0.6"/>
+    <circle cx="1080" cy="80" r="1.7" opacity="0.9"/>
+    <circle cx="1140" cy="240" r="1.0" opacity="0.6"/>
+    <circle cx="220" cy="200" r="1.0" opacity="0.5"/>
+    <circle cx="430" cy="260" r="1.2" opacity="0.7"/>
+    <circle cx="730" cy="220" r="1.1" opacity="0.6"/>
+    <circle cx="1010" cy="160" r="1.4" opacity="0.8"/>
+  </g>
+
+  <!-- Spiral arms -->
+  <g stroke-linecap="round" fill="none" opacity="0.55" filter="url(#glow)">
+    <path d="M600 200 C 720 150, 860 160, 940 250" stroke="#A88BFF" stroke-width="3"/>
+    <path d="M600 200 C 480 250, 340 240, 260 150" stroke="#65D7FF" stroke-width="3"/>
+    <path d="M600 200 C 700 280, 820 320, 900 300" stroke="#FFD27D" stroke-width="2.5"/>
+    <path d="M600 200 C 500 120, 380 90, 300 120" stroke="#7CFFB2" stroke-width="2.5"/>
+  </g>
+
+  <!-- Core -->
+  <circle cx="600" cy="200" r="90" fill="url(#core)" opacity="0.9"/>
+  <circle cx="600" cy="200" r="34" fill="#ffffff" filter="url(#glow)"/>
+
+  <!-- Orb accents -->
+  <circle cx="940" cy="250" r="14" fill="url(#orb)"/>
+  <circle cx="260" cy="150" r="12" fill="url(#orb)"/>
+  <circle cx="900" cy="300" r="10" fill="url(#orb)"/>
+  <circle cx="300" cy="120" r="10" fill="url(#orb)"/>
+
+  <!-- Title -->
+  <text x="600" y="362" text-anchor="middle" font-family="'Courier New', monospace" font-size="40" font-weight="700" letter-spacing="10" fill="#ffffff">STELLORA</text>
+  <text x="600" y="386" text-anchor="middle" font-family="'Courier New', monospace" font-size="13" letter-spacing="4" fill="#A88BFF">EVERY MEMORY IS A STAR</text>
+</svg>

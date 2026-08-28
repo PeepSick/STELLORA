@@ -3,7 +3,7 @@ export type StellarisNodeType =
   | 'memory' | 'project' | 'agent' | 'folder' | 'document'
   | 'conversation' | 'skill' | 'tool' | 'prompt' | 'collection'
   | 'sector' | 'entity' | 'custom'
-  | 'photo' | 'event';
+  | 'photo' | 'event' | 'audio' | 'commit';
 
 // ─── Galaxy Provider (data source) ───
 // 'knowledge' = markdown notes (existing). 'stellora' = photo/memory gallery.
@@ -189,6 +189,37 @@ export const DEFAULT_GALAXY_SETTINGS: GalaxySettings = {
   showOrbitLines: true,
 };
 
+// ─── Feature flags & i18n (Phase 0) ───
+export type LanguageMode = 'auto' | 'en' | 'tr';
+export type ThemePreset = 'dark' | 'light' | 'aurora' | 'custom';
+
+/**
+ * Every optional galaxy feature is gated behind a flag so the user can enable
+ * or disable it from Settings. Defaults keep the app lean (only the original
+ * knowledge + stellora graphs active).
+ */
+export interface FeatureSettings {
+  showFinance3D: boolean;      // A1: render the 1661-file economy/finance corpus as 3D nodes
+  timelineView: boolean;       // temporal axis mode
+  musicGalaxy: boolean;        // local music folder → galaxy
+  gitGalaxy: boolean;          // GitHub repo URL → commit galaxy
+  collaborativeMode: boolean;  // BroadcastChannel cross-tab sync
+  exportImport: boolean;       // JSON serialize/restore
+  themePreset: ThemePreset;
+  language: LanguageMode;
+}
+
+export const DEFAULT_FEATURE_SETTINGS: FeatureSettings = {
+  showFinance3D: false,
+  timelineView: false,
+  musicGalaxy: false,
+  gitGalaxy: false,
+  collaborativeMode: false,
+  exportImport: false,
+  themePreset: 'dark',
+  language: 'auto',
+};
+
 // ─── Search ───
 export interface SearchCommand {
   id: string;
@@ -230,6 +261,8 @@ export const NODE_VISUALS: Record<StellarisNodeType, NodeVisualConfig> = {
   custom:       { color: '#E2E8F0', emissiveIntensity: 1.0, baseSize: 1.0, glowStrength: 0.5, pulseSpeed: 0.4 },
   photo:        { color: '#FDE68A', emissiveIntensity: 1.1, baseSize: 1.3, glowStrength: 0.6, pulseSpeed: 0.3 },
   event:        { color: '#FB923C', emissiveIntensity: 1.4, baseSize: 1.6, glowStrength: 0.9, pulseSpeed: 0.25 },
+  audio:        { color: '#34D399', emissiveIntensity: 1.5, baseSize: 1.1, glowStrength: 0.7, pulseSpeed: 0.6 },
+  commit:       { color: '#F472B6', emissiveIntensity: 1.2, baseSize: 0.9, glowStrength: 0.5, pulseSpeed: 0.4 },
 };
 
 // ─── Props for main component ───

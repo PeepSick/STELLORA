@@ -3,6 +3,7 @@ import { Billboard, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useStellarisStore } from '@/store';
 import { NODE_VISUALS } from '@/types';
+import { audioManager } from '@/utils/audio';
 import type { StellorMemoryMetadata } from '@/types';
 import { MemoryNode } from './MemoryNode';
 import { computeMemoryScore, memoryScoreToScaleFactor } from '@/utils/memoryScore';
@@ -69,9 +70,9 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
               isSelected={isSelected}
               isHovered={isHovered}
               dimFactor={dimFactor}
-              onHoverStart={() => hoverNode(node.id)}
+              onHoverStart={() => { hoverNode(node.id); audioManager.playHover(); }}
               onHoverEnd={() => hoverNode(null)}
-              onSelect={() => { selectNode(node.id); focusOnNode(node.id); }}
+              onSelect={() => { selectNode(node.id); focusOnNode(node.id); audioManager.playSelect(); }}
             />
           );
         }
@@ -81,9 +82,9 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
             {/* Invisible hit target — generous click/hover area around the star point */}
             <mesh
               scale={scale * 1.4}
-              onPointerOver={(e) => { e.stopPropagation(); hoverNode(node.id); document.body.style.cursor = 'pointer'; }}
+              onPointerOver={(e) => { e.stopPropagation(); hoverNode(node.id); document.body.style.cursor = 'pointer'; audioManager.playHover(); }}
               onPointerOut={() => { hoverNode(null); document.body.style.cursor = 'auto'; }}
-              onClick={(e) => { e.stopPropagation(); selectNode(node.id); focusOnNode(node.id); }}
+              onClick={(e) => { e.stopPropagation(); selectNode(node.id); focusOnNode(node.id); audioManager.playSelect(); }}
               visible={false}
             >
               <sphereGeometry args={[1.0, 8, 8]} />

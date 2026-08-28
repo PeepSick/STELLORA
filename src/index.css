@@ -107,3 +107,35 @@
   0% { transform: rotate(360deg); }
   100% { transform: rotate(0deg); }
 }
+
+/* ─── Mobile responsive (Phase 5) ─── */
+@media (max-width: 768px) {
+  /* Side panels become full-width bottom sheets instead of fixed side rails */
+  .stellaris-galaxy .left-panel-wrapper > div,
+  .stellaris-galaxy .right-panel-wrapper > div {
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    width: auto !important;
+    top: 3.5rem !important;
+    bottom: 4rem !important;
+  }
+
+  .stellaris-galaxy .right-panel-wrapper:nth-of-type(2) > div {
+    top: auto !important;
+    bottom: 4rem !important;
+    max-height: 45vh !important;
+  }
+
+  /* Dock wraps / scrolls horizontally */
+  .stellaris-galaxy [class*="BottomDock"],
+  .stellaris-galaxy nav {
+    overflow-x: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .stellaris-galaxy .left-panel-wrapper > div,
+  .stellaris-galaxy .right-panel-wrapper > div {
+    font-size: 11px;
+  }
+}

@@ -2,6 +2,7 @@ class AmbientAudioManager {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
   private ambientOscillator: OscillatorNode | null = null;
+  private ambientOscillator2: OscillatorNode | null = null;
   private isMuted: boolean = false;
   private volume: number = 0.5;
 
@@ -20,15 +21,20 @@ class AmbientAudioManager {
   playAmbient() {
     this.init();
     if (!this.ctx || !this.masterGain || this.ambientOscillator) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
 
-    // Create a low drone sound
+    // Create a low drone sound (root + fifth for a warmer, more musical pad)
     this.ambientOscillator = this.ctx.createOscillator();
     this.ambientOscillator.type = 'sine';
     this.ambientOscillator.frequency.value = 55; // Low A
 
+    this.ambientOscillator2 = this.ctx.createOscillator();
+    this.ambientOscillator2.type = 'sine';
+    this.ambientOscillator2.frequency.value = 82.4; // E (a fifth above) — adds body
+
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = 200;
+    filter.frequency.value = 320;
 
     const lfo = this.ctx.createOscillator();
     lfo.type = 'sine';
@@ -41,19 +47,27 @@ class AmbientAudioManager {
     lfoGain.connect(filter.frequency);
     
     const ambientGain = this.ctx.createGain();
-    ambientGain.gain.value = 0.1; // Keep it subtle
+    ambientGain.gain.value = 0.16; // Subtle but clearly audible
 
     this.ambientOscillator.connect(filter);
+    this.ambientOscillator2.connect(filter);
     filter.connect(ambientGain);
     ambientGain.connect(this.masterGain);
 
     lfo.start();
     this.ambientOscillator.start();
+    this.ambientOscillator2.start();
   }
+
+  private lastHover = 0;
 
   playHover() {
     this.init();
     if (!this.ctx || !this.masterGain || this.isMuted) return;
+    // Throttle so rapid pointer moves between nodes don't machine-gun the blip
+    const now = performance.now();
+    if (now - this.lastHover < 70) return;
+    this.lastHover = now;
 
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -159,6 +173,32 @@ class AmbientAudioManager {
     }
   }
 
+  /** Resume a suspended AudioContext (required after a user gesture). */
+  resume() {
+    this.init();
+    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+  }
+
+  /** Stop the ambient drone without tearing down the whole context. */
+  stopAmbient() {
+    [this.ambientOscillator, this.ambientOscillator2].forEach((osc) => {
+      if (osc) {
+        try {
+          osc.stop();
+        } catch {
+          /* already stopped */
+        }
+        osc.disconnect();
+      }
+    });
+    this.ambientOscillator = null;
+    this.ambientOscillator2 = null;
+  }
+
+  isAmbientPlaying(): boolean {
+    return this.ambientOscillator !== null;
+  }
+
   mute() {
     this.isMuted = true;
     if (this.masterGain) this.masterGain.gain.value = 0;
@@ -170,11 +210,7 @@ class AmbientAudioManager {
   }
 
   dispose() {
-    if (this.ambientOscillator) {
-      this.ambientOscillator.stop();
-      this.ambientOscillator.disconnect();
-      this.ambientOscillator = null;
-    }
+    this.stopAmbient();
     if (this.ctx) {
       this.ctx.close();
       this.ctx = null;
