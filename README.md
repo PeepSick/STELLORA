@@ -15,9 +15,19 @@ photo memories, and more as an explorable procedural galaxy in the browser —
 built with **React 19**, **Three.js** (`@react-three/fiber` + `drei` +
 `postprocessing`), **Zustand**, **Tailwind CSS v4**, and **Vite**.
 
-It is a **client-side only** application: there is no backend, no server, and no
-phone-home. Everything runs in your browser; AI keys live only in your
-`localStorage`.
+No Stellora backend. Your data stays local unless you explicitly connect to an
+external provider or service (GitHub, Nominatim, or your chosen AI provider).
+
+**At a glance**
+
+- 📜 MIT-licensed code
+- ™️ *Stellora* name & logo trademark-protected
+- 🆓 Free forever
+- 🖥️ Self-hostable
+- 🚫 No backend
+- 📡 No telemetry
+- 🔑 Bring-your-own-key AI
+- 🍴 Fork freely — just rename your fork
 
 ![Stellora walkthrough](docs/demo.gif)
 
@@ -41,7 +51,8 @@ phone-home. Everything runs in your browser; AI keys live only in your
   appear automatically as nodes (same auto-discovery pattern as the gallery).
   No external API key required.
 - **Git Galaxy** *(toggle)* — paste any public GitHub repository URL in Settings
-  and its commits are fetched and rendered as a chained commit graph.
+  and its commits are fetched and rendered as a chained commit graph. GitHub API
+  availability and rate limits may apply.
 - **Timeline View** *(toggle)* — overlays a temporal reference axis with year
   tick marks on the galactic plane.
 - **Collaborative Mode** *(toggle)* — sync the galaxy across browser tabs on the
@@ -53,7 +64,8 @@ phone-home. Everything runs in your browser; AI keys live only in your
 - **AI Chat** — click the core orb to open a chat panel that browses your node
   graph and can create connections on request. **Bring-your-own-key**: Claude,
   OpenAI, DeepSeek, Z.AI, or any OpenAI-compatible endpoint. Voice input/output
-  uses the browser's built-in Web Speech API.
+  uses the browser's built-in Web Speech API. API keys are stored in browser
+  `localStorage` — use a browser profile/device you trust.
 - **Free forever. Bring your own AI key.** 🔑 No paid tier, no metered API on our
   side, no cost to self-host — you only pay your chosen provider for the tokens
   you use.
@@ -89,7 +101,7 @@ needed):
 |---|---|
 | `src/data/business`, `ops`, `product`, `sourcing` | Markdown notes → Knowledge graph |
 | `src/data/economy/finance` | Reference corpus → searchable (and 3D when enabled) |
-| `src/data/galery` | Personal photos → Stellora memory nodes |
+| `src/data/gallery` | Personal photos → Stellora memory nodes |
 | `src/data/music` | Audio files → Music Galaxy nodes |
 
 ### AI chat setup

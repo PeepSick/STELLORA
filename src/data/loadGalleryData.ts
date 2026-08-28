@@ -2,7 +2,7 @@ import { parse as parseExif } from 'exifr';
 import type { StellarisNode, StellarisConnection, StellorPhotoMetadata, StellorMemoryMetadata } from '@/types';
 
 // Actual gallery photos, served as URLs by Vite (not inlined/parsed as text)
-const photoModules = import.meta.glob('/src/data/galery/*.{jpg,jpeg,png}', {
+const photoModules = import.meta.glob('/src/data/gallery/*.{jpg,jpeg,png}', {
   query: '?url',
   import: 'default',
   eager: true,

@@ -28,7 +28,7 @@ export default function App() {
   }, [galaxyProvider, galleryData]);
 
   // Music Galaxy: auto-discover local audio files and push them into the store
-  // when the feature is enabled (galery-style auto-loading).
+  // when the feature is enabled (gallery-style auto-loading).
   useEffect(() => {
     if (showMusic) setMusicNodes(loadMusicNodes());
     else setMusicNodes([]);
