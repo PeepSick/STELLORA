@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Plus, Bookmark, Share2, Save, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sliders, BookOpen, Image as ImageIcon, Layers } from 'lucide-react';
+import { Sparkles, Plus, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Sliders, BookOpen, Image as ImageIcon, Layers } from 'lucide-react';
 import { useStellarisStore } from '@/store';
 import { GlassSlider } from './glass/GlassSlider';
 
@@ -222,23 +222,6 @@ export const ControlPanel: React.FC = () => {
               <Plus size={13} className="text-purple-400 group-hover:rotate-90 transition-transform duration-300" />
               <span>NEW GALAXY</span>
             </button>
-
-            <div className="flex items-center justify-around text-[10px] text-slate-400 font-medium pt-0.5">
-              <button className="hover:text-white flex items-center gap-1 transition-colors">
-                <Bookmark size={11} />
-                <span>PRESETS</span>
-              </button>
-              <span className="text-slate-700">•</span>
-              <button className="hover:text-white flex items-center gap-1 transition-colors">
-                <Save size={11} />
-                <span>SAVE</span>
-              </button>
-              <span className="text-slate-700">•</span>
-              <button className="hover:text-white flex items-center gap-1 transition-colors">
-                <Share2 size={11} />
-                <span>SHARE</span>
-              </button>
-            </div>
           </div>
 
         </div>
