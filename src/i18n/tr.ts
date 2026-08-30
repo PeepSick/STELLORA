@@ -24,6 +24,19 @@ export const tr: Partial<Record<TranslationKey, string>> = {
   sourceAll: 'Tümü',
   galaxySource: 'Galaksi Kaynağı',
 
+  // ─── Per-node source hover tag ───
+  nodeSourceLabel: 'KAYNAK',
+  sourceBusiness: 'İş',
+  sourceOps: 'Operasyon',
+  sourceProduct: 'Ürün',
+  sourceSourcing: 'Tedarik',
+  sourceFinanceCorpus: 'Finans Korpusu',
+  sourceStelloraMemory: 'Stellora Anısı',
+  sourceMusicGalaxy: 'Müzik Galaksisi',
+  sourceGitGalaxy: 'Git Galaksisi',
+  sourceMismatchQuestion: 'Kaynak uyuşmuyor mu?',
+  sourceMismatchFlagged: 'Uyuşmazlık işaretlendi',
+
   // ─── Settings panel ───
   settings: 'Ayarlar',
   settingsFeatures: 'Özellikler',

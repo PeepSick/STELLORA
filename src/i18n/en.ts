@@ -25,6 +25,19 @@ export const en = {
   sourceAll: 'All',
   galaxySource: 'Galaxy Source',
 
+  // ─── Per-node source hover tag ───
+  nodeSourceLabel: 'SOURCE',
+  sourceBusiness: 'Business',
+  sourceOps: 'Operations',
+  sourceProduct: 'Product',
+  sourceSourcing: 'Sourcing',
+  sourceFinanceCorpus: 'Finance Corpus',
+  sourceStelloraMemory: 'Stellora Memory',
+  sourceMusicGalaxy: 'Music Galaxy',
+  sourceGitGalaxy: 'Git Galaxy',
+  sourceMismatchQuestion: 'Source mismatch?',
+  sourceMismatchFlagged: 'Flagged as mismatch',
+
   // ─── Settings panel ───
   settings: 'Settings',
   settingsFeatures: 'Features',

@@ -7,6 +7,9 @@ import { audioManager } from '@/utils/audio';
 import type { StellorMemoryMetadata } from '@/types';
 import { MemoryNode } from './MemoryNode';
 import { computeMemoryScore, memoryScoreToScaleFactor } from '@/utils/memoryScore';
+import { getNodeSourceLabelKey } from '@/utils/nodeSource';
+import { isSourceMismatchFlagged, toggleSourceMismatchFlag } from '@/hooks/useSourceMismatch';
+import { useTranslation } from '@/i18n';
 
 // Scales the base 0.45 silhouette up to a clearly visible "orb" marker
 const NODE_SCALE_MULTIPLIER = 1.5;
@@ -14,6 +17,9 @@ const NODE_SCALE_MULTIPLIER = 1.5;
 export const KnowledgeNodes: React.FC = React.memo(() => {
   const { nodes, selectedNodeId, hoveredNodeId, galaxy, selectNode, hoverNode, focusOnNode } = useStellarisStore();
   const nodeSize = galaxy?.nodeSize ?? 1.0;
+  const { t } = useTranslation();
+  // Bumped on every mismatch-flag toggle so the hover tag re-reads localStorage
+  const [mismatchVersion, setMismatchVersion] = React.useState(0);
 
   // Generate smooth circular radial glow texture for sprites (fixes square box artifact!)
   const glowTexture = useMemo(() => {
@@ -136,14 +142,46 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
               </mesh>
             </Billboard>
 
-            {/* Hover label — node title, floating just below the orb */}
-            {isHovered && (
-              <Html center position={[0, -scale * 2.6, 0]} style={{ pointerEvents: 'none' }}>
-                <div className="px-2 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/20 text-[11px] text-white font-mono whitespace-nowrap shadow-lg">
-                  {node.title}
-                </div>
-              </Html>
-            )}
+            {/* Hover label — node title + source tag, floating just below the orb */}
+            {isHovered && (() => {
+              const flagged = isSourceMismatchFlagged(node.id);
+              return (
+                <Html center position={[0, -scale * 2.6, 0]} style={{ pointerEvents: 'none' }} zIndexRange={[10, 0]}>
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="px-2 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/20 text-[11px] text-white font-mono whitespace-nowrap shadow-lg">
+                      {node.title}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-mono uppercase tracking-wider border whitespace-nowrap ${
+                          flagged
+                            ? 'bg-amber-500/20 border-amber-400/50 text-amber-200'
+                            : 'bg-black/70 border-white/15 text-slate-400'
+                        }`}
+                      >
+                        {t('nodeSourceLabel')}: {t(getNodeSourceLabelKey(node) as any)}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSourceMismatchFlag(node.id);
+                          setMismatchVersion((v) => v + 1);
+                        }}
+                        title={t('sourceMismatchQuestion')}
+                        className={`px-1.5 py-0.5 rounded-full text-[9px] font-mono uppercase tracking-wider border whitespace-nowrap transition-colors ${
+                          flagged
+                            ? 'bg-amber-500/30 border-amber-400/60 text-amber-100'
+                            : 'bg-black/70 border-white/15 text-slate-500 hover:text-slate-300 hover:border-white/30'
+                        }`}
+                        style={{ pointerEvents: 'auto' }}
+                      >
+                        {flagged ? '🚩 ' + t('sourceMismatchFlagged') : t('sourceMismatchQuestion')}
+                      </button>
+                    </div>
+                  </div>
+                </Html>
+              );
+            })()}
           </group>
         );
       })}
