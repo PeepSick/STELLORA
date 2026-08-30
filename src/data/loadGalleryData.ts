@@ -1,5 +1,7 @@
 import { parse as parseExif } from 'exifr';
 import type { StellarisNode, StellarisConnection, StellorPhotoMetadata, StellorMemoryMetadata } from '@/types';
+import { useStellarisStore } from '@/store';
+import { resolveLanguage } from '@/i18n';
 
 // Actual gallery photos, served as URLs by Vite (not inlined/parsed as text)
 const photoModules = import.meta.glob('/src/data/gallery/*.{jpg,jpeg,png}', {
@@ -125,13 +127,19 @@ export async function loadGalleryNodesAndConnections(): Promise<{
   byDay.forEach((photos, dayKey) => {
     photos.sort((a, b) => (a.dateTaken ?? '').localeCompare(b.dateTaken ?? ''));
 
+    // Loading happens once (outside React), so this reads whatever language is
+    // set at that moment rather than reacting live — switching language after
+    // the gallery has already loaded won't retroactively reformat these labels
+    // (reload the page after switching to pick up the new locale here).
+    const lang = resolveLanguage(useStellarisStore.getState().features.language);
+    const dateLocale = lang === 'tr' ? 'tr-TR' : 'en-US';
     const dateLabel = dayKey === 'unknown'
-      ? 'Bilinmeyen tarih'
-      : new Date(dayKey).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+      ? (lang === 'tr' ? 'Bilinmeyen tarih' : 'Unknown date')
+      : new Date(dayKey).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' });
 
     const peopleObserved = photos.reduce((max, p) => Math.max(max, p.peopleObserved), 0);
     const daySummary = DAY_SUMMARIES[dayKey]
-      ?? `${dateLabel} — ${photos.length} fotoğraf çekildi.`;
+      ?? (lang === 'tr' ? `${dateLabel} — ${photos.length} fotoğraf çekildi.` : `${dateLabel} — ${photos.length} photo${photos.length === 1 ? '' : 's'} taken.`);
 
     const metadata: StellorMemoryMetadata = {
       dayKey,

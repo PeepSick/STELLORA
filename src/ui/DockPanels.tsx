@@ -336,7 +336,7 @@ const ArchiveContent: React.FC = () => {
   );
 };
 
-const PROVIDERS: AiProviderId[] = ['claude', 'openai', 'deepseek', 'zai', 'custom'];
+const PROVIDERS: AiProviderId[] = ['claude', 'openai', 'deepseek', 'zai', 'vertex', 'custom'];
 
 type FeatureFlagKey = keyof FeatureSettings;
 
@@ -403,7 +403,7 @@ const SettingsContent: React.FC = () => {
         <p className="text-[10px] text-slate-500 leading-relaxed mb-2">
           {t('settings')}: client-only — your key stays in this browser and is sent straight to the provider.
         </p>
-        <div className="grid grid-cols-5 gap-1 mb-3">
+        <div className="grid grid-cols-6 gap-1 mb-3">
           {PROVIDERS.map((p) => (
             <button
               key={p}
@@ -421,30 +421,43 @@ const SettingsContent: React.FC = () => {
 
         <div className="space-y-2">
           <div>
-            <label className="text-[9px] text-slate-500 uppercase tracking-wider">API Key</label>
+            <label className="text-[9px] text-slate-500 uppercase tracking-wider">
+              {activeProvider === 'vertex' ? 'Proxy URL' : 'API Key'}
+            </label>
             <div className="flex items-center gap-1.5">
               <input
-                type={showKey ? 'text' : 'password'}
+                type={activeProvider === 'vertex' || showKey ? 'text' : 'password'}
                 value={activeSettings.apiKey}
                 onChange={(e) => updateProviderSettings(activeProvider, { apiKey: e.target.value })}
-                placeholder="sk-… / ls_…"
+                placeholder={activeProvider === 'vertex' ? 'http://localhost:8787/vertex-chat' : 'sk-… / ls_…'}
                 className="flex-1 bg-black/30 border border-white/10 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50 font-mono"
               />
-              <button
-                onClick={() => setShowKey((v) => !v)}
-                className="w-8 h-8 shrink-0 rounded-lg bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-400"
-              >
-                {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
-              </button>
+              {activeProvider !== 'vertex' && (
+                <button
+                  onClick={() => setShowKey((v) => !v)}
+                  className="w-8 h-8 shrink-0 rounded-lg bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-400"
+                >
+                  {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
+                </button>
+              )}
             </div>
+            {activeProvider === 'vertex' && (
+              <p className="text-[9px] text-slate-500 mt-1 leading-relaxed">
+                Not a credential — the URL of a local proxy that holds your Vertex service
+                account server-side. See <code className="text-slate-400">server/vertex-proxy.mjs</code>. Never paste a
+                private key here.
+              </p>
+            )}
           </div>
           <div>
-            <label className="text-[9px] text-slate-500 uppercase tracking-wider">Base URL</label>
+            <label className="text-[9px] text-slate-500 uppercase tracking-wider">
+              {activeProvider === 'vertex' ? 'Location' : 'Base URL'}
+            </label>
             <input
               type="text"
               value={activeSettings.baseUrl}
               onChange={(e) => updateProviderSettings(activeProvider, { baseUrl: e.target.value })}
-              placeholder="https://api.example.com/v1"
+              placeholder={activeProvider === 'vertex' ? 'global or us-central1' : 'https://api.example.com/v1'}
               className="w-full bg-black/30 border border-white/10 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50 font-mono"
             />
           </div>

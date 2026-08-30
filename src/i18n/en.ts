@@ -38,6 +38,25 @@ export const en = {
   sourceMismatchQuestion: 'Source mismatch?',
   sourceMismatchFlagged: 'Flagged as mismatch',
 
+  // ─── Photo/memory detail panel ───
+  photoUnit: 'photo',
+  peopleUnit: 'people',
+  noLocation: 'no location',
+  noGpsData: 'No location data (no GPS in EXIF)',
+  sceneLabel: 'Scene',
+  editLabel: 'Edit',
+  doneLabel: 'Done',
+  previewLabel: 'Preview',
+  scenePlaceholder: 'What was happening in this photo?',
+  tagsPlaceholder: 'tags, comma separated…',
+  writeScenePrompt: 'Write what was happening in this photo…',
+  storyLabel: 'Story',
+  storyPlaceholder: 'Write the story of this day… (markdown + [[wikilink]] supported)',
+  writeStoryPrompt: 'Write the story of this day…',
+  peopleLabel: 'People',
+  peoplePlaceholder: 'add names, comma separated…',
+  photosOfDay: "This day's photos",
+
   // ─── Settings panel ───
   settings: 'Settings',
   settingsFeatures: 'Features',

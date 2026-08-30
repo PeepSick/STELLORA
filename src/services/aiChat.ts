@@ -136,6 +136,74 @@ async function runOpenAiCompatible(
   return 'Araç çağrıları çok uzun sürdü, cevap alınamadı.';
 }
 
+// ── Vertex AI (proxied — never client-side credentials) ──
+// A Vertex service account is a long-lived, broad-access GCP credential
+// signed with an RSA private key — unlike a per-user API key, it must never
+// exist in browser-reachable storage (localStorage, memory, devtools). So
+// unlike every other provider here, "Vertex" in Settings does not hold a
+// credential at all: the "API Key" field holds the URL of a small local
+// proxy (see server/vertex-proxy.mjs) that holds the real credential and
+// does the JWT-sign → OAuth2 → generateContent dance server-side. This
+// function only ever talks to that proxy, and the proxy only ever proxies —
+// tool EXECUTION still happens here in the browser, since tools need live
+// 3D-scene state (selected node, gallery contents, etc.) the proxy can't see.
+async function runVertex(
+  settings: AiProviderSettings,
+  systemPrompt: string,
+  history: ChatTurn[],
+  tools: ChatTool[],
+  executeTool: ToolExecutor
+): Promise<string> {
+  const proxyUrl = settings.apiKey; // holds a URL for this provider, not a credential
+  if (!/^https?:\/\//.test(proxyUrl)) {
+    throw new Error('Vertex: "API Key" alanına proxy URL\'i gir (örn. http://localhost:8787/vertex-chat) — bkz. server/vertex-proxy.mjs.');
+  }
+  const location = settings.baseUrl || 'global';
+
+  const contents: Array<{ role: string; parts: any[] }> = history.map((t) => ({
+    role: t.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: t.content }],
+  }));
+  const geminiTools = tools.length
+    ? [{ functionDeclarations: tools.map((t) => ({ name: t.name, description: t.description, parameters: t.parameters })) }]
+    : undefined;
+
+  for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+    const res = await fetch(proxyUrl, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        contents,
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        ...(geminiTools ? { tools: geminiTools } : {}),
+        model: settings.model,
+        location,
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      throw new Error(`Vertex proxy hatası (${res.status}): ${body.slice(0, 300)}`);
+    }
+    const data = await res.json();
+    const parts: any[] = data.candidates?.[0]?.content?.parts ?? [];
+    const functionCalls = parts.filter((p) => p.functionCall);
+
+    if (functionCalls.length > 0) {
+      contents.push({ role: 'model', parts });
+      const responseParts = [];
+      for (const p of functionCalls) {
+        const result = await executeTool(p.functionCall.name, p.functionCall.args ?? {});
+        responseParts.push({ functionResponse: { name: p.functionCall.name, response: { result } } });
+      }
+      contents.push({ role: 'user', parts: responseParts });
+      continue;
+    }
+
+    return parts.filter((p) => p.text).map((p) => p.text).join('\n').trim();
+  }
+  return 'Araç çağrıları çok uzun sürdü, cevap alınamadı.';
+}
+
 /**
  * Bring-your-own-key chat: every call goes straight from this browser to
  * whichever provider/base URL the user configured in Settings — no proxy,
@@ -155,11 +223,14 @@ export async function runChat(
   if (provider === 'claude') {
     return runAnthropic(settings, systemPrompt, history, tools, executeTool);
   }
-  const labels: Record<Exclude<AiProviderId, 'claude'>, string> = {
+  if (provider === 'vertex') {
+    return runVertex(settings, systemPrompt, history, tools, executeTool);
+  }
+  const labels: Record<Exclude<AiProviderId, 'claude' | 'vertex'>, string> = {
     openai: 'OpenAI',
     deepseek: 'DeepSeek',
     zai: 'Z.AI',
     custom: 'Custom',
   };
-  return runOpenAiCompatible(settings, labels[provider as Exclude<AiProviderId, 'claude'>], systemPrompt, history, tools, executeTool);
+  return runOpenAiCompatible(settings, labels[provider as Exclude<AiProviderId, 'claude' | 'vertex'>], systemPrompt, history, tools, executeTool);
 }

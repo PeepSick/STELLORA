@@ -6,6 +6,7 @@ export const AI_PROVIDER_LABELS: Record<AiProviderId, string> = {
   openai: 'OpenAI',
   deepseek: 'DeepSeek',
   zai: 'Z.AI (GLM)',
+  vertex: 'Vertex AI (Google, service account)',
   custom: 'Custom (OpenAI-uyumlu)',
 };
 

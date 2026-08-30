@@ -37,6 +37,25 @@ export const tr: Partial<Record<TranslationKey, string>> = {
   sourceMismatchQuestion: 'Kaynak uyuşmuyor mu?',
   sourceMismatchFlagged: 'Uyuşmazlık işaretlendi',
 
+  // ─── Foto/anı detay paneli ───
+  photoUnit: 'foto',
+  peopleUnit: 'kişi',
+  noLocation: 'konum yok',
+  noGpsData: "Konum verisi yok (EXIF'te GPS bulunamadı)",
+  sceneLabel: 'Sahne',
+  editLabel: 'Düzenle',
+  doneLabel: 'Bitti',
+  previewLabel: 'Önizleme',
+  scenePlaceholder: 'Bu fotoğrafta ne oluyordu?',
+  tagsPlaceholder: 'etiketler, virgülle ayır…',
+  writeScenePrompt: 'Bu fotoğrafta ne oluyordu, yaz…',
+  storyLabel: 'Hikaye',
+  storyPlaceholder: 'Bu günün hikayesini yaz… (markdown + [[wikilink]] destekli)',
+  writeStoryPrompt: 'Bu günün hikayesini yaz…',
+  peopleLabel: 'Kişiler',
+  peoplePlaceholder: 'virgülle ayırarak isim ekle…',
+  photosOfDay: 'Bu günün fotoğrafları',
+
   // ─── Settings panel ───
   settings: 'Ayarlar',
   settingsFeatures: 'Özellikler',

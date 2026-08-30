@@ -50,6 +50,9 @@ const AI_PROVIDER_DEFAULTS: Record<AiProviderId, AiProviderSettings> = {
   openai: { apiKey: '', baseUrl: 'https://api.openai.com/v1', model: 'gpt-4o-mini' },
   deepseek: { apiKey: '', baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat' },
   zai: { apiKey: '', baseUrl: 'https://open.bigmodel.cn/api/paas/v4', model: 'glm-4-plus' },
+  // apiKey here is the whole service-account JSON pasted as text; baseUrl
+  // doubles as the Vertex location (e.g. "global" or "us-central1").
+  vertex: { apiKey: '', baseUrl: 'global', model: 'gemini-2.5-flash' },
   custom: { apiKey: '', baseUrl: '', model: '' },
 };
 
@@ -167,7 +170,7 @@ interface StellarisStore {
 
 export const useStellarisStore = create<StellarisStore>((set, get) => ({
   // ─── Galaxy Provider ───
-  galaxyProvider: 'knowledge',
+  galaxyProvider: 'all',
   setGalaxyProvider: (provider) => set({ galaxyProvider: provider, selectedNodeId: null, hoveredNodeId: null }),
 
   // ─── Nodes ───

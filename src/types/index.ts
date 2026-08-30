@@ -15,7 +15,11 @@ export type GalaxyProvider = 'knowledge' | 'stellora' | 'all' | 'git' | 'music' 
 export type DockTabId = 'dashboard' | 'galaxy' | 'systems' | 'orbs' | 'analytics' | 'archive' | 'settings';
 
 // ─── AI chat providers (Faz 5) — bring-your-own-key, never a key baked into the app ───
-export type AiProviderId = 'claude' | 'openai' | 'deepseek' | 'zai' | 'custom';
+// 'vertex' is a bring-your-own-*service-account* provider: paste the whole
+// GCP service account JSON into the "API Key" field. Everything (JWT
+// signing, OAuth2 token exchange, the generateContent call) runs client-side
+// via the Web Crypto API — no backend, same as every other provider here.
+export type AiProviderId = 'claude' | 'openai' | 'deepseek' | 'zai' | 'vertex' | 'custom';
 
 export interface AiProviderSettings {
   apiKey: string;
@@ -210,12 +214,12 @@ export interface FeatureSettings {
 }
 
 export const DEFAULT_FEATURE_SETTINGS: FeatureSettings = {
-  showFinance3D: false,
-  timelineView: false,
-  musicGalaxy: false,
-  gitGalaxy: false,
-  collaborativeMode: false,
-  exportImport: false,
+  showFinance3D: true,
+  timelineView: true,
+  musicGalaxy: true,
+  gitGalaxy: true,
+  collaborativeMode: true,
+  exportImport: true,
   themePreset: 'dark',
   language: 'auto',
 };

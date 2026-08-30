@@ -3,47 +3,180 @@ import { X, Send, Mic, MicOff, Volume2, VolumeX, Bot, Loader2 } from 'lucide-rea
 import { useStellarisStore } from '@/store';
 import { useAiConfig, AI_PROVIDER_LABELS } from '@/hooks/useAiConfig';
 import { runChat, type ChatTool, type ChatTurn } from '@/services/aiChat';
+import { reverseGeocode } from '@/utils/reverseGeocode';
+import { useTranslation } from '@/i18n';
+import type { StellorMemoryMetadata } from '@/types';
+import { readStellorPhotoNote } from '@/hooks/useStellorPhotoNote';
+import { readStellorMemory } from '@/hooks/useStellorMemory';
 
-const SYSTEM_PROMPT =
-  'Sen Stellora galaksi uygulamasının içinde çalışan bir asistansın. Kullanıcının bilgi ve anı ' +
-  "node'larını incelemesine ve aralarında bağlantı kurmasına yardımcı oluyorsun. list_nodes aracıyla " +
-  "mevcut node'ları görebilir, connect_nodes aracıyla iki node arasında bağlantı kurabilirsin. " +
-  'Kısa, net ve Türkçe cevap ver.';
+function todayIso(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function systemPrompt(): string {
+  return (
+    'You are an assistant embedded in the Stellora galaxy app. You help the user explore their ' +
+    "knowledge notes and Stellora memories (one node per calendar day of photos), and can connect nodes together. " +
+    `Today's date is ${todayIso()} — resolve relative time references ("last Christmas", "last summer", "3 months ago") ` +
+    'into concrete dates or date ranges yourself before calling a tool.\n\n' +
+    'Available tools: list_nodes (browse everything), gallery_search (find memory days by date, date range, ' +
+    'place name, or how many people are in the photos), open_memory (actually select and focus a memory in the ' +
+    '3D view — call this after gallery_search finds what the user asked for, don\'t just describe it in text), ' +
+    'and connect_nodes (link two nodes).\n\n' +
+    'When the user asks to see/find a memory, call gallery_search, then call open_memory with the best match\'s ' +
+    'nodeId so it actually opens in the app — that is the whole point of asking. If gallery_search returns ' +
+    'several plausible matches, briefly ask which one before opening. Keep replies short and conversational.'
+  );
+}
 
 const CHAT_TOOLS: ChatTool[] = [
   {
     name: 'list_nodes',
-    description: "Galaksideki tüm node'ları (id, başlık, tip, etiketler) listeler.",
+    description: "Lists every node in the galaxy (id, title, type, tags).",
     parameters: { type: 'object', properties: {}, required: [] },
   },
   {
-    name: 'connect_nodes',
-    description: "İki node arasında bağlantı kurar; galaksi grafiğinde çizgi olarak görünür.",
+    name: 'gallery_search',
+    description:
+      "Searches Stellora memory days (one node per calendar day of photos) by date, date range, place name, " +
+      "how many people appear in the photos, and/or free-text over the scene/story. Returns candidate nodeIds — " +
+      "call open_memory on the best match afterward, don't just report results as text.",
     parameters: {
       type: 'object',
       properties: {
-        fromId: { type: 'string', description: 'Kaynak node id' },
-        toId: { type: 'string', description: 'Hedef node id' },
-        strength: { type: 'number', description: '0-1 arası bağlantı gücü, varsayılan 0.6' },
+        date: { type: 'string', description: 'Exact day, "YYYY-MM-DD", or any-year match "MM-DD" (e.g. "12-25" for every Dec 25th)' },
+        dateFrom: { type: 'string', description: 'Start of a date range, "YYYY-MM-DD" (inclusive)' },
+        dateTo: { type: 'string', description: 'End of a date range, "YYYY-MM-DD" (inclusive)' },
+        location: { type: 'string', description: 'Free-text place name substring to match against the reverse-geocoded location, e.g. "Antalya" or "Portland"' },
+        peopleCount: { type: 'number', description: 'Match days where a photo shows exactly this many people' },
+        query: { type: 'string', description: 'Free-text match against the scene description, tags, or story' },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'open_memory',
+    description: 'Selects and focuses a memory (or any node) in the 3D view by its nodeId — this is the action that actually shows it to the user.',
+    parameters: {
+      type: 'object',
+      properties: { nodeId: { type: 'string', description: 'The nodeId to open, from list_nodes or gallery_search' } },
+      required: ['nodeId'],
+    },
+  },
+  {
+    name: 'connect_nodes',
+    description: 'Creates a connection between two nodes; appears as a line in the galaxy graph.',
+    parameters: {
+      type: 'object',
+      properties: {
+        fromId: { type: 'string', description: 'Source node id' },
+        toId: { type: 'string', description: 'Target node id' },
+        strength: { type: 'number', description: 'Connection strength 0-1, default 0.6' },
       },
       required: ['fromId', 'toId'],
     },
   },
 ];
 
+function dayKeyOf(node: { metadata?: Record<string, unknown> }): string | null {
+  const meta = node.metadata as unknown as StellorMemoryMetadata | undefined;
+  return meta?.dayKey ?? null;
+}
+
 async function executeTool(name: string, args: Record<string, unknown>): Promise<string> {
   const store = useStellarisStore.getState();
+
   if (name === 'list_nodes') {
     const all = [...store.nodes, ...store.searchIndex];
     return JSON.stringify(all.slice(0, 200).map((n) => ({ id: n.id, title: n.title, type: n.type, tags: n.tags })));
   }
+
+  if (name === 'gallery_search') {
+    const { date, dateFrom, dateTo, location, peopleCount, query } = args as Record<string, unknown>;
+    const memoryNodes = store.nodes.filter((n) => Array.isArray((n.metadata as any)?.photos));
+
+    let candidates = memoryNodes.filter((n) => {
+      const dayKey = dayKeyOf(n);
+      if (!dayKey) return false;
+      if (typeof date === 'string' && date) {
+        if (date.length === 5) { if (dayKey.slice(5) !== date) return false; }
+        else if (dayKey !== date) return false;
+      }
+      if (typeof dateFrom === 'string' && dateFrom && dayKey < dateFrom) return false;
+      if (typeof dateTo === 'string' && dateTo && dayKey > dateTo) return false;
+      return true;
+    });
+
+    if (typeof peopleCount === 'number') {
+      candidates = candidates.filter((n) => {
+        const meta = n.metadata as unknown as StellorMemoryMetadata;
+        return meta.photos.some((p) => p.peopleObserved === peopleCount);
+      });
+    }
+
+    if (typeof query === 'string' && query.trim()) {
+      // Word-level match, not exact-phrase — "car dealership" should still find
+      // a scene that only says "car", not require the literal phrase. Owner-written
+      // edits (scene/tags per photo, story per day) live in localStorage and take
+      // priority over the loader's static seed text, so merge those in too —
+      // otherwise search never sees what the user actually wrote.
+      const words = query.toLowerCase().split(/\s+/).filter((w) => w.length > 2);
+      candidates = candidates
+        .map((n) => {
+          const meta = n.metadata as unknown as StellorMemoryMetadata;
+          const story = readStellorMemory(n.id).story;
+          const photoText = meta.photos.flatMap((p) => {
+            const override = readStellorPhotoNote(p.filename);
+            const scene = override?.scene ?? p.scene;
+            const tags = override?.tags ?? p.tags ?? [];
+            return [scene, ...tags];
+          });
+          const haystack = [meta.daySummary, story, ...photoText].join(' ').toLowerCase();
+          const score = words.filter((w) => haystack.includes(w)).length;
+          return { n, score };
+        })
+        .filter((r) => r.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map((r) => r.n);
+    }
+
+    if (typeof location === 'string' && location.trim()) {
+      const loc = location.toLowerCase();
+      const withPlace: typeof candidates = [];
+      for (const n of candidates) {
+        const meta = n.metadata as unknown as StellorMemoryMetadata;
+        const gps = meta.photos.find((p) => p.gps)?.gps;
+        if (!gps) continue;
+        const place = await reverseGeocode(gps.lat, gps.lon, 'en');
+        if (place && place.toLowerCase().includes(loc)) withPlace.push(n);
+      }
+      candidates = withPlace;
+    }
+
+    if (candidates.length === 0) return 'No matching memories found.';
+    const results = candidates.slice(0, 10).map((n) => {
+      const meta = n.metadata as unknown as StellorMemoryMetadata;
+      return { nodeId: n.id, dateLabel: meta.dateLabel, dayKey: meta.dayKey, peopleObserved: meta.peopleObserved, photoCount: meta.photos.length, summary: meta.daySummary };
+    });
+    return JSON.stringify(results);
+  }
+
+  if (name === 'open_memory') {
+    const nodeId = String(args.nodeId ?? '');
+    const node = store.getNodeById(nodeId);
+    if (!node) return `Node not found: ${nodeId}`;
+    store.selectNode(nodeId);
+    store.focusOnNode(nodeId);
+    return `Opened "${node.title}" in the 3D view.`;
+  }
+
   if (name === 'connect_nodes') {
     const fromId = String(args.fromId ?? '');
     const toId = String(args.toId ?? '');
     const strength = typeof args.strength === 'number' ? args.strength : 0.6;
     return store.addConnection(fromId, toId, strength).message;
   }
-  return `Bilinmeyen araç: ${name}`;
+  return `Unknown tool: ${name}`;
 }
 
 type SpeechRecognitionCtor = new () => any;
@@ -56,6 +189,8 @@ function getSpeechRecognitionCtor(): SpeechRecognitionCtor | null {
 export const ChatPanel: React.FC = () => {
   const { setChatOpen, setActiveDockTab } = useStellarisStore();
   const { activeProvider, activeSettings, isConfigured } = useAiConfig();
+  const { lang } = useTranslation();
+  const speechLang = lang === 'tr' ? 'tr-TR' : 'en-US';
 
   const [messages, setMessages] = useState<ChatTurn[]>([]);
   const [input, setInput] = useState('');
@@ -88,7 +223,7 @@ export const ChatPanel: React.FC = () => {
       return;
     }
     const recognition = new Ctor();
-    recognition.lang = 'tr-TR';
+    recognition.lang = speechLang;
     recognition.continuous = false;
     recognition.interimResults = false;
     recognition.onresult = (event: any) => {
@@ -106,7 +241,7 @@ export const ChatPanel: React.FC = () => {
     if (!ttsEnabled || !ttsSupported || !text) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'tr-TR';
+    utterance.lang = speechLang;
     window.speechSynthesis.speak(utterance);
   };
 
@@ -119,11 +254,11 @@ export const ChatPanel: React.FC = () => {
     setMessages(nextHistory);
     setIsLoading(true);
     try {
-      const reply = await runChat(activeProvider, activeSettings, SYSTEM_PROMPT, nextHistory, CHAT_TOOLS, executeTool);
+      const reply = await runChat(activeProvider, activeSettings, systemPrompt(), nextHistory, CHAT_TOOLS, executeTool);
       setMessages((prev) => [...prev, { role: 'assistant', content: reply || '(boş cevap)' }]);
       speak(reply);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Bilinmeyen hata');
+      setError(e instanceof Error ? e.message : 'Unknown error');
     } finally {
       setIsLoading(false);
     }
@@ -145,7 +280,7 @@ export const ChatPanel: React.FC = () => {
             {ttsSupported && (
               <button
                 onClick={() => setTtsEnabled((v) => !v)}
-                title={ttsEnabled ? 'Sesli cevabı kapat' : 'Sesli cevabı aç'}
+                title={ttsEnabled ? 'Turn off voice replies' : 'Turn on voice replies'}
                 className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
               >
                 {ttsEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
@@ -163,8 +298,8 @@ export const ChatPanel: React.FC = () => {
         {!isConfigured ? (
           <div className="p-5 flex flex-col items-center gap-3 text-center">
             <p className="text-[11px] text-slate-400 leading-relaxed">
-              Önce bir AI sağlayıcı seç ve kendi API key'ini gir — SETTINGS sekmesinden.
-              Key sadece bu tarayıcıda saklanır, hiçbir sunucuya gönderilmez.
+              Pick an AI provider and enter your own API key first — from the SETTINGS tab.
+              Your key stays in this browser and is never sent anywhere else.
             </p>
             <button
               onClick={() => {
@@ -173,7 +308,7 @@ export const ChatPanel: React.FC = () => {
               }}
               className="px-3 py-1.5 rounded-lg bg-purple-500/20 border border-purple-400/50 text-purple-200 text-[10px] font-bold uppercase tracking-wider hover:bg-purple-500/30"
             >
-              SETTINGS'E GİT
+              GO TO SETTINGS
             </button>
           </div>
         ) : (
@@ -182,7 +317,7 @@ export const ChatPanel: React.FC = () => {
             <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar px-4 py-3 space-y-2.5 min-h-[200px]">
               {messages.length === 0 && (
                 <p className="text-[11px] text-slate-500 text-center pt-6">
-                  Node'lar hakkında soru sor ya da "X ile Y'yi bağla" gibi bir istek yaz.
+                  Ask about your nodes, or try "show me the photo from December 25th."
                 </p>
               )}
               {messages.map((m, i) => (
@@ -202,7 +337,7 @@ export const ChatPanel: React.FC = () => {
                 <div className="flex justify-start">
                   <div className="rounded-xl px-3 py-2 bg-white/5 border border-white/10 text-slate-400 flex items-center gap-1.5">
                     <Loader2 size={12} className="animate-spin" />
-                    <span className="text-[10px]">düşünüyor…</span>
+                    <span className="text-[10px]">thinking…</span>
                   </div>
                 </div>
               )}
@@ -216,7 +351,7 @@ export const ChatPanel: React.FC = () => {
               {speechSupported && (
                 <button
                   onClick={toggleListening}
-                  title={isListening ? 'Dinlemeyi durdur' : 'Sesli konuş'}
+                  title={isListening ? 'Stop listening' : 'Speak'}
                   className={`w-8 h-8 shrink-0 rounded-lg flex items-center justify-center transition-colors ${
                     isListening ? 'bg-red-500/20 border border-red-400/50 text-red-300' : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white'
                   }`}
@@ -231,7 +366,7 @@ export const ChatPanel: React.FC = () => {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleSend();
                 }}
-                placeholder="Bir şey sor…"
+                placeholder="Ask something…"
                 className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50"
               />
               <button

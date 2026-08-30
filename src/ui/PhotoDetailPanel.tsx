@@ -8,6 +8,7 @@ import { useStellarisStore } from '@/store';
 import { useStellorMemory } from '@/hooks/useStellorMemory';
 import { useStellorPhotoNote } from '@/hooks/useStellorPhotoNote';
 import { useReverseGeocode } from '@/hooks/useReverseGeocode';
+import { useTranslation } from '@/i18n';
 import type { StellarisNode, StellorMemoryMetadata } from '@/types';
 
 interface MemoryDetailPanelProps {
@@ -59,6 +60,7 @@ const MARK_CONFIG = {
 } as const;
 
 export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => {
+  const { t, lang } = useTranslation();
   const [view, setView] = useState<'gallery' | 'memory'>('gallery');
   const [storyEditing, setStoryEditing] = useState(false);
   const [sceneEditing, setSceneEditing] = useState(false);
@@ -80,7 +82,7 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
   const currentPlace = useReverseGeocode(current.gps);
 
   const photoDateLabel = current?.dateTaken
-    ? new Date(current.dateTaken).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+    ? new Date(current.dateTaken).toLocaleTimeString(lang === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' })
     : null;
 
   // Editing a photo's own scene text shouldn't carry over when the slider moves to a different photo
@@ -133,9 +135,9 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
           </div>
         </div>
         <div className="flex items-center gap-3 flex-wrap text-[10px] text-slate-400">
-          <span className="flex items-center gap-1"><ImagesIcon size={10} className="text-amber-400" /> {photos.length} foto</span>
+          <span className="flex items-center gap-1"><ImagesIcon size={10} className="text-amber-400" /> {photos.length} {t('photoUnit')}</span>
           {meta.peopleObserved > 0 && (
-            <span className="flex items-center gap-1"><Users size={10} className="text-cyan-400" /> {meta.peopleObserved} kişi</span>
+            <span className="flex items-center gap-1"><Users size={10} className="text-cyan-400" /> {meta.peopleObserved} {t('peopleUnit')}</span>
           )}
           {firstGps ? (
             <span className="flex items-center gap-1" title={`${firstGps.lat.toFixed(5)}, ${firstGps.lon.toFixed(5)}`}>
@@ -143,7 +145,7 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
               {summaryPlace ?? <span className="font-mono">{firstGps.lat.toFixed(3)}, {firstGps.lon.toFixed(3)}</span>}
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-slate-500"><MapPin size={10} /> konum yok</span>
+            <span className="flex items-center gap-1 text-slate-500"><MapPin size={10} /> {t('noLocation')}</span>
           )}
         </div>
         <p className="text-[11px] text-slate-300 leading-relaxed pt-0.5">{meta.daySummary}</p>
@@ -207,12 +209,12 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
             {/* Scene + tags — written by whoever lived the memory, not an AI vision pipeline (Faz 2) */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-[9px] text-slate-400 tracking-wider font-semibold uppercase">Sahne</span>
+                <span className="text-[9px] text-slate-400 tracking-wider font-semibold uppercase">{t('sceneLabel')}</span>
                 <button
                   onClick={() => setSceneEditing((v) => !v)}
                   className="text-[9px] text-amber-300 hover:text-amber-100 font-semibold uppercase"
                 >
-                  {sceneEditing ? 'Bitti' : 'Düzenle'}
+                  {sceneEditing ? t('doneLabel') : t('editLabel')}
                 </button>
               </div>
               {sceneEditing ? (
@@ -220,7 +222,7 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
                   <textarea
                     value={currentNote.scene}
                     onChange={(e) => updateScene(e.target.value)}
-                    placeholder="Bu fotoğrafta ne oluyordu?"
+                    placeholder={t('scenePlaceholder')}
                     rows={2}
                     autoFocus
                     className="w-full bg-black/30 border border-white/10 rounded-lg p-2 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/50 resize-none"
@@ -229,7 +231,7 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
                     type="text"
                     defaultValue={currentNote.tags.join(', ')}
                     onBlur={(e) => updateTags(e.target.value)}
-                    placeholder="etiketler, virgülle ayır…"
+                    placeholder={t('tagsPlaceholder')}
                     className="w-full bg-black/30 border border-white/10 rounded-lg p-1.5 text-[10px] text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-amber-400/50 font-mono"
                   />
                 </div>
@@ -245,7 +247,7 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
                   onClick={() => setSceneEditing(true)}
                   className="w-full bg-black/30 border border-dashed border-white/10 rounded-lg p-2 text-[11px] text-slate-600 text-left hover:border-amber-400/40 hover:text-slate-400"
                 >
-                  Bu fotoğrafta ne oluyordu, yaz…
+                  {t('writeScenePrompt')}
                 </button>
               )}
               {!sceneEditing && currentNote.tags.length > 0 && (
@@ -279,7 +281,7 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
               ) : (
                 <div className="flex items-center gap-1.5 text-slate-500">
                   <MapPin size={11} className="shrink-0" />
-                  <span className="text-[11px]">Konum verisi yok (EXIF'te GPS bulunamadı)</span>
+                  <span className="text-[11px]">{t('noGpsData')}</span>
                 </div>
               )}
 
@@ -329,20 +331,20 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
               <div className="flex items-center justify-between">
                 <span className="text-[9px] text-slate-400 tracking-wider font-semibold uppercase flex items-center gap-1">
                   <BookOpen size={10} className="text-purple-400" />
-                  HİKAYE
+                  {t('storyLabel')}
                 </span>
                 <button
                   onClick={() => setStoryEditing((v) => !v)}
                   className="text-[9px] text-purple-300 hover:text-purple-100 font-semibold uppercase"
                 >
-                  {storyEditing ? 'Önizleme' : 'Düzenle'}
+                  {storyEditing ? t('previewLabel') : t('editLabel')}
                 </button>
               </div>
               {storyEditing ? (
                 <textarea
                   value={memory.story}
                   onChange={(e) => updateStory(e.target.value)}
-                  placeholder="Bu günün hikayesini yaz… (markdown + [[wikilink]] destekli)"
+                  placeholder={t('storyPlaceholder')}
                   rows={5}
                   autoFocus
                   className="w-full bg-black/30 border border-white/10 rounded-lg p-2 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50 resize-none font-mono"
@@ -359,7 +361,7 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
                   onClick={() => setStoryEditing(true)}
                   className="w-full bg-black/30 border border-dashed border-white/10 rounded-lg p-2 text-[11px] text-slate-600 text-left hover:border-purple-400/40 hover:text-slate-400"
                 >
-                  Bu günün hikayesini yaz…
+                  {t('writeStoryPrompt')}
                 </button>
               )}
             </div>
@@ -367,13 +369,13 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
             <div className="space-y-1">
               <span className="text-[9px] text-slate-400 tracking-wider font-semibold uppercase flex items-center gap-1">
                 <Users size={10} className="text-cyan-400" />
-                KİŞİLER
+                {t('peopleLabel')}
               </span>
               <input
                 type="text"
                 defaultValue={memory.people.join(', ')}
                 onBlur={(e) => updatePeople(e.target.value)}
-                placeholder="virgülle ayırarak isim ekle…"
+                placeholder={t('peoplePlaceholder')}
                 className="w-full bg-black/30 border border-white/10 rounded-lg p-2 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-cyan-400/50"
               />
             </div>
@@ -382,7 +384,7 @@ export const PhotoDetailPanel: React.FC<MemoryDetailPanelProps> = ({ node }) => 
               <div className="space-y-1">
                 <span className="text-[9px] text-slate-400 tracking-wider font-semibold uppercase flex items-center gap-1">
                   <ImagesIcon size={10} className="text-amber-400" />
-                  BU GÜNÜN FOTOĞRAFLARI ({photos.length})
+                  {t('photosOfDay')} ({photos.length})
                 </span>
                 <div className="flex gap-1.5 overflow-x-auto custom-scrollbar pb-1">
                   {photos.map((p, i) => (
