@@ -73,6 +73,11 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
           // field — photo count + story length + favorite/important/archived mark
           const memoryScore = computeMemoryScore(node.id, node.metadata as unknown as StellorMemoryMetadata);
           scale *= memoryScoreToScaleFactor(memoryScore);
+          // A real photo reads as competing content even at the abstract-orb dim
+          // level (0.35) — a nearby unselected day's cover looked like it was
+          // "the same panel" as the selected one. Push it much further down so
+          // only the selected memory's photo is legible.
+          const memoryDimFactor = dim ? 0.08 : 1.0;
           return (
             <MemoryNode
               key={node.id}
@@ -80,7 +85,7 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
               scale={scale}
               isSelected={isSelected}
               isHovered={isHovered}
-              dimFactor={dimFactor}
+              dimFactor={memoryDimFactor}
               onHoverStart={() => { hoverNode(node.id); audioManager.playHover(); }}
               onHoverEnd={() => hoverNode(null)}
               onSelect={() => { selectNode(node.id); focusOnNode(node.id); audioManager.playSelect(); }}

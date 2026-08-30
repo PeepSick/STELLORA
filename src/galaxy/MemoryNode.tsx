@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Billboard, Html, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { useStellarisStore } from '@/store';
+import { useTranslation } from '@/i18n';
 import type { StellarisNode, StellorMemoryMetadata } from '@/types';
 
 interface MemoryNodeProps {
@@ -110,6 +111,7 @@ const MemoryCover: React.FC<MemoryNodeProps> = ({ node, scale, isSelected, isHov
 export const MemoryNode: React.FC<MemoryNodeProps> = (props) => {
   const { node, scale, isHovered } = props;
   const meta = node.metadata as unknown as StellorMemoryMetadata;
+  const { t } = useTranslation();
 
   return (
     <group position={node.position}>
@@ -120,7 +122,7 @@ export const MemoryNode: React.FC<MemoryNodeProps> = (props) => {
       {isHovered && (
         <Html center position={[0, -scale * 1.6, 0]} style={{ pointerEvents: 'none' }}>
           <div className="px-2 py-1 rounded-md bg-black/80 backdrop-blur-sm border border-white/20 text-[11px] text-white font-mono whitespace-nowrap shadow-lg">
-            {node.title} · {meta.photos.length} foto
+            {node.title} · {meta.photos.length} {t('photoUnit')}
           </div>
         </Html>
       )}

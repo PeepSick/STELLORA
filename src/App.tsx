@@ -3,9 +3,14 @@ import { StellarisGalaxy } from './StellarisGalaxy';
 import { mockNodes, mockConnections, financeSearchIndex } from '@/data/mockNodes';
 import { loadGalleryNodesAndConnections } from '@/data/loadGalleryData';
 import { loadMusicNodes } from '@/data/loadMusicData';
+import { seedDemoContentOnce } from '@/data/seedDemoContent';
 import { useStellarisStore } from '@/store';
 import type { StellarisNode, StellarisConnection } from '@/types';
 import './index.css';
+
+// Runs once at module load, synchronously, before anything reads localStorage
+// for photo/memory content — see seedDemoContent.ts for why this exists.
+seedDemoContentOnce();
 
 /**
  * Standalone Demo Application
@@ -19,13 +24,23 @@ export default function App() {
   const galaxyProvider = useStellarisStore((s) => s.galaxyProvider);
   const showMusic = useStellarisStore((s) => s.features.musicGalaxy);
   const setMusicNodes = useStellarisStore((s) => s.setMusicNodes);
+  const language = useStellarisStore((s) => s.features.language);
   const [galleryData, setGalleryData] = useState<{ nodes: StellarisNode[]; connections: StellarisConnection[] } | null>(null);
+  const [galleryDataLang, setGalleryDataLang] = useState<typeof language | null>(null);
 
   useEffect(() => {
-    if ((galaxyProvider === 'stellora' || galaxyProvider === 'all') && !galleryData) {
-      loadGalleryNodesAndConnections().then(setGalleryData);
+    // Date labels/day summaries are baked in at load time (resolveLanguage()
+    // is read once per node, not reactively), so switching language in
+    // Settings previously left stale-locale text until a manual page reload.
+    // Re-load whenever the resolved language actually changes; otherwise
+    // reuse the cached data instead of re-parsing EXIF on every provider toggle.
+    if ((galaxyProvider === 'stellora' || galaxyProvider === 'all') && (!galleryData || galleryDataLang !== language)) {
+      loadGalleryNodesAndConnections().then((data) => {
+        setGalleryData(data);
+        setGalleryDataLang(language);
+      });
     }
-  }, [galaxyProvider, galleryData]);
+  }, [galaxyProvider, language, galleryData, galleryDataLang]);
 
   // Music Galaxy: auto-discover local audio files and push them into the store
   // when the feature is enabled (gallery-style auto-loading).
