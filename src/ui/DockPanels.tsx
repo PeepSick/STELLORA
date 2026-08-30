@@ -42,14 +42,15 @@ const Shell: React.FC<{ title: string; onClose: () => void; children: React.Reac
 
 const DashboardContent: React.FC = () => {
   const { nodes, searchIndex, connections, galaxyProvider, setActiveDockTab } = useStellarisStore();
+  const { t } = useTranslation();
   const memoryCount = nodes.filter(isMemoryNode).length;
   const archivedCount = nodes.filter((n) => isMemoryNode(n) && readStellorMemory(n.id).mark === 'archived').length;
 
   const stats = [
-    { label: 'Toplam Node', value: nodes.length },
-    { label: 'Arama İndeksi', value: searchIndex.length },
-    { label: 'Bağlantı', value: connections.length },
-    { label: 'Anı Günü', value: memoryCount },
+    { label: t('totalNodes'), value: nodes.length },
+    { label: t('searchIndexLabel'), value: searchIndex.length },
+    { label: t('connectionsLabel'), value: connections.length },
+    { label: t('memoryDaysLabel'), value: memoryCount },
   ];
 
   return (
@@ -63,7 +64,7 @@ const DashboardContent: React.FC = () => {
         ))}
       </div>
       <div className="text-[10px] text-slate-400 flex items-center justify-between bg-black/20 rounded-xl border border-white/5 p-3">
-        <span>AKTİF KAYNAK</span>
+        <span className="uppercase">{t('activeSourceLabel')}</span>
         <span className="text-purple-300 font-bold uppercase">{galaxyProvider}</span>
       </div>
       {archivedCount > 0 && (
@@ -71,7 +72,7 @@ const DashboardContent: React.FC = () => {
           onClick={() => setActiveDockTab('archive')}
           className="w-full text-left text-[10px] text-slate-400 hover:text-slate-200 bg-black/20 hover:bg-black/30 rounded-xl border border-white/5 p-3 transition-colors"
         >
-          {archivedCount} arşivlenmiş anı var → ARCHIVE'a git
+          {archivedCount} {t('archivedMemoriesLabel')} → {t('goToArchive')}
         </button>
       )}
       <div className="grid grid-cols-3 gap-2">
@@ -91,6 +92,7 @@ const DashboardContent: React.FC = () => {
 
 const SystemsContent: React.FC = () => {
   const { nodes, selectNode, focusOnNode, setActiveDockTab } = useStellarisStore();
+  const { t } = useTranslation();
   const groups = useMemo(() => {
     const map = new Map<string, StellarisNode[]>();
     nodes.forEach((n) => {
@@ -138,13 +140,14 @@ const SystemsContent: React.FC = () => {
           </div>
         );
       })}
-      {groups.length === 0 && <p className="text-[11px] text-slate-500 text-center py-6">Henüz node yok.</p>}
+      {groups.length === 0 && <p className="text-[11px] text-slate-500 text-center py-6">{t('noNodesYet')}</p>}
     </div>
   );
 };
 
 const OrbsContent: React.FC = () => {
   const { nodes, selectNode, focusOnNode, setActiveDockTab } = useStellarisStore();
+  const { t } = useTranslation();
   const sorted = useMemo(() => [...nodes].sort((a, b) => b.importance - a.importance), [nodes]);
 
   return (
@@ -172,13 +175,14 @@ const OrbsContent: React.FC = () => {
           </button>
         );
       })}
-      {sorted.length === 0 && <p className="col-span-2 text-[11px] text-slate-500 text-center py-6">Henüz node yok.</p>}
+      {sorted.length === 0 && <p className="col-span-2 text-[11px] text-slate-500 text-center py-6">{t('noNodesYet')}</p>}
     </div>
   );
 };
 
 const AnalyticsContent: React.FC = () => {
   const { nodes, searchIndex, connections, galaxyProvider } = useStellarisStore();
+  const { t } = useTranslation();
 
   const byType = useMemo(() => {
     const map = new Map<string, number>();
@@ -211,26 +215,26 @@ const AnalyticsContent: React.FC = () => {
   return (
     <div className="space-y-4 text-[11px]">
       <section>
-        <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">Genel</h4>
+        <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">{t('generalLabel')}</h4>
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-black/20 rounded-lg border border-white/5 p-2.5 flex items-center justify-between">
             <span className="text-slate-400">3D Node</span><span className="text-white font-bold">{nodes.length}</span>
           </div>
           <div className="bg-black/20 rounded-lg border border-white/5 p-2.5 flex items-center justify-between">
-            <span className="text-slate-400">Arama İndeksi</span><span className="text-white font-bold">{searchIndex.length}</span>
+            <span className="text-slate-400">{t('searchIndexLabel')}</span><span className="text-white font-bold">{searchIndex.length}</span>
           </div>
           <div className="bg-black/20 rounded-lg border border-white/5 p-2.5 flex items-center justify-between">
-            <span className="text-slate-400">Bağlantı</span><span className="text-white font-bold">{connections.length}</span>
+            <span className="text-slate-400">{t('connectionsLabel')}</span><span className="text-white font-bold">{connections.length}</span>
           </div>
           <div className="bg-black/20 rounded-lg border border-white/5 p-2.5 flex items-center justify-between">
-            <span className="text-slate-400">Aktif Kaynak</span><span className="text-purple-300 font-bold uppercase">{galaxyProvider}</span>
+            <span className="text-slate-400">{t('activeSourceLabel')}</span><span className="text-purple-300 font-bold uppercase">{galaxyProvider}</span>
           </div>
         </div>
       </section>
 
       {(bySource.knowledge > 0 || bySource.stellora > 0) && (
         <section>
-          <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">Kaynağa Göre</h4>
+          <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">{t('bySourceLabel')}</h4>
           <div className="space-y-1">
             <div className="flex items-center justify-between bg-black/20 rounded-lg border border-white/5 p-2">
               <span className="text-slate-400">Knowledge</span><span className="text-cyan-300 font-bold">{bySource.knowledge}</span>
@@ -243,7 +247,7 @@ const AnalyticsContent: React.FC = () => {
       )}
 
       <section>
-        <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">Tipe Göre</h4>
+        <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">{t('byTypeLabel')}</h4>
         <div className="space-y-1">
           {byType.map(([type, count]) => {
             const visual = NODE_VISUALS[type as keyof typeof NODE_VISUALS];
@@ -263,7 +267,7 @@ const AnalyticsContent: React.FC = () => {
 
       {topTags.length > 0 && (
         <section>
-          <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">En Sık Etiketler</h4>
+          <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">{t('topTagsLabel')}</h4>
           <div className="flex flex-wrap gap-1.5">
             {topTags.map(([tag, count]) => (
               <span key={tag} className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[9px] text-slate-300 font-mono">
@@ -276,7 +280,7 @@ const AnalyticsContent: React.FC = () => {
 
       {(marks.favorite + marks.important + marks.archived) > 0 && (
         <section>
-          <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">Anı İşaretleri</h4>
+          <h4 className="text-[9px] text-slate-500 uppercase tracking-wider mb-1.5">{t('memoryMarksLabel')}</h4>
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-black/20 rounded-lg border border-white/5 p-2 flex items-center gap-1.5">
               <Star size={11} className="text-amber-300" /><span className="text-white font-bold">{marks.favorite}</span>
@@ -296,13 +300,14 @@ const AnalyticsContent: React.FC = () => {
 
 const ArchiveContent: React.FC = () => {
   const { nodes, selectNode, focusOnNode, setActiveDockTab } = useStellarisStore();
+  const { t } = useTranslation();
   const [, forceUpdate] = useState(0);
   const archived = nodes.filter((n) => isMemoryNode(n) && readStellorMemory(n.id).mark === 'archived');
 
   return (
     <div className="space-y-1.5">
       {archived.length === 0 && (
-        <p className="text-[11px] text-slate-500 text-center py-6">Arşivlenmiş anı yok. Bir anıyı panelde 🕓 ile işaretleyerek buraya taşıyabilirsin.</p>
+        <p className="text-[11px] text-slate-500 text-center py-6">{t('noArchivedMemories')}</p>
       )}
       {archived.map((n) => {
         const meta = n.metadata as unknown as StellorMemoryMetadata;
@@ -317,14 +322,14 @@ const ArchiveContent: React.FC = () => {
               className="min-w-0 text-left"
             >
               <div className="text-[11px] text-slate-200 truncate">{n.title}</div>
-              <div className="text-[9px] text-slate-500 truncate">{meta.photos.length} foto · {meta.daySummary}</div>
+              <div className="text-[9px] text-slate-500 truncate">{meta.photos.length} {t('photoUnit')} · {meta.daySummary}</div>
             </button>
             <button
               onClick={() => {
                 writeStellorMark(n.id, null);
                 forceUpdate((v) => v + 1);
               }}
-              title="Arşivden çıkar"
+              title={t('removeFromArchive')}
               className="shrink-0 w-7 h-7 rounded-md bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-400 hover:text-white"
             >
               <RotateCcw size={12} />
@@ -467,7 +472,7 @@ const SettingsContent: React.FC = () => {
               type="text"
               value={activeSettings.model}
               onChange={(e) => updateProviderSettings(activeProvider, { model: e.target.value })}
-              placeholder="model-adı"
+              placeholder={t('modelNamePlaceholder')}
               className="w-full bg-black/30 border border-white/10 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50 font-mono"
             />
           </div>
@@ -641,13 +646,14 @@ const SettingsContent: React.FC = () => {
 
 export const DockPanels: React.FC = () => {
   const { activeDockTab, setActiveDockTab } = useStellarisStore();
+  const { t } = useTranslation();
   const close = () => setActiveDockTab('galaxy');
 
   return (
     <Shell title={PANEL_TITLES[activeDockTab] ?? activeDockTab} onClose={close}>
       {activeDockTab === 'dashboard' && (
         <div className="flex items-center gap-1.5 text-[9px] text-slate-500 uppercase tracking-wider mb-3">
-          <LayoutDashboard size={10} /> Genel bakış
+          <LayoutDashboard size={10} /> {t('overview')}
         </div>
       )}
       {activeDockTab === 'dashboard' && <DashboardContent />}

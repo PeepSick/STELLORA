@@ -212,7 +212,7 @@ function getSpeechRecognitionCtor(): SpeechRecognitionCtor | null {
 export const ChatPanel: React.FC = () => {
   const { setChatOpen, setActiveDockTab } = useStellarisStore();
   const { activeProvider, activeSettings, isConfigured } = useAiConfig();
-  const { lang } = useTranslation();
+  const { t, lang } = useTranslation();
   const speechLang = lang === 'tr' ? 'tr-TR' : 'en-US';
 
   const [messages, setMessages] = useState<ChatTurn[]>([]);
@@ -278,7 +278,7 @@ export const ChatPanel: React.FC = () => {
     setIsLoading(true);
     try {
       const reply = await runChat(activeProvider, activeSettings, systemPrompt(), nextHistory, CHAT_TOOLS, executeTool);
-      setMessages((prev) => [...prev, { role: 'assistant', content: reply || '(boş cevap)' }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: reply || t('emptyReply') }]);
       speak(reply);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unknown error');

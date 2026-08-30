@@ -51,7 +51,7 @@ async function runAnthropic(
     });
     if (!res.ok) {
       const errText = await res.text().catch(() => res.statusText);
-      throw new Error(`Claude API hatası (${res.status}): ${errText.slice(0, 300)}`);
+      throw new Error(`Claude API error (${res.status}): ${errText.slice(0, 300)}`);
     }
     const data = await res.json();
     const content: Array<Record<string, any>> = data.content ?? [];
@@ -75,7 +75,7 @@ async function runAnthropic(
       .join('\n')
       .trim();
   }
-  return 'Araç çağrıları çok uzun sürdü, cevap alınamadı.';
+  return 'Tool calls took too long — no reply received.';
 }
 
 async function runOpenAiCompatible(
@@ -110,11 +110,11 @@ async function runOpenAiCompatible(
     });
     if (!res.ok) {
       const errText = await res.text().catch(() => res.statusText);
-      throw new Error(`${providerLabel} API hatası (${res.status}): ${errText.slice(0, 300)}`);
+      throw new Error(`${providerLabel} API error (${res.status}): ${errText.slice(0, 300)}`);
     }
     const data = await res.json();
     const message = data.choices?.[0]?.message;
-    if (!message) throw new Error(`${providerLabel}: beklenmeyen cevap biçimi`);
+    if (!message) throw new Error(`${providerLabel}: unexpected response format`);
 
     if (message.tool_calls && message.tool_calls.length > 0) {
       messages.push(message);
@@ -133,7 +133,7 @@ async function runOpenAiCompatible(
 
     return (message.content ?? '').trim();
   }
-  return 'Araç çağrıları çok uzun sürdü, cevap alınamadı.';
+  return 'Tool calls took too long — no reply received.';
 }
 
 // ── Vertex AI (proxied — never client-side credentials) ──
@@ -156,7 +156,7 @@ async function runVertex(
 ): Promise<string> {
   const proxyUrl = settings.apiKey; // holds a URL for this provider, not a credential
   if (!/^https?:\/\//.test(proxyUrl)) {
-    throw new Error('Vertex: "API Key" alanına proxy URL\'i gir (örn. http://localhost:8787/vertex-chat) — bkz. server/vertex-proxy.mjs.');
+    throw new Error('Vertex: enter a proxy URL in the "API Key" field (e.g. http://localhost:8787/vertex-chat) — see server/vertex-proxy.mjs.');
   }
   const location = settings.baseUrl || 'global';
 
@@ -182,7 +182,7 @@ async function runVertex(
     });
     if (!res.ok) {
       const body = await res.text().catch(() => '');
-      throw new Error(`Vertex proxy hatası (${res.status}): ${body.slice(0, 300)}`);
+      throw new Error(`Vertex proxy error (${res.status}): ${body.slice(0, 300)}`);
     }
     const data = await res.json();
     const parts: any[] = data.candidates?.[0]?.content?.parts ?? [];
@@ -201,7 +201,7 @@ async function runVertex(
 
     return parts.filter((p) => p.text).map((p) => p.text).join('\n').trim();
   }
-  return 'Araç çağrıları çok uzun sürdü, cevap alınamadı.';
+  return 'Tool calls took too long — no reply received.';
 }
 
 /**
@@ -218,7 +218,7 @@ export async function runChat(
   executeTool: ToolExecutor
 ): Promise<string> {
   if (!settings.apiKey || !settings.baseUrl || !settings.model) {
-    throw new Error('AI sağlayıcı ayarları eksik — SETTINGS sekmesinden API key, base URL ve model gir.');
+    throw new Error('AI provider settings missing — enter an API key, base URL, and model in the SETTINGS tab.');
   }
   if (provider === 'claude') {
     return runAnthropic(settings, systemPrompt, history, tools, executeTool);

@@ -221,17 +221,17 @@ export const useStellarisStore = create<StellarisStore>((set, get) => ({
   },
 
   addConnection: (source, target, strength = 0.6) => {
-    if (source === target) return { ok: false, message: 'Bir node kendine bağlanamaz.' };
+    if (source === target) return { ok: false, message: 'A node cannot connect to itself.' };
     const { nodes, searchIndex, connections } = get();
     const allNodes = [...nodes, ...searchIndex];
-    if (!allNodes.some((n) => n.id === source)) return { ok: false, message: `Node bulunamadı: ${source}` };
-    if (!allNodes.some((n) => n.id === target)) return { ok: false, message: `Node bulunamadı: ${target}` };
+    if (!allNodes.some((n) => n.id === source)) return { ok: false, message: `Node not found: ${source}` };
+    if (!allNodes.some((n) => n.id === target)) return { ok: false, message: `Node not found: ${target}` };
     const exists = connections.some(
       (c) => (c.source === source && c.target === target) || (c.source === target && c.target === source)
     );
-    if (exists) return { ok: false, message: 'Bu iki node zaten bağlı.' };
+    if (exists) return { ok: false, message: 'These two nodes are already connected.' };
     set((s) => ({ connections: [...s.connections, { source, target, strength, type: 'default' }] }));
-    return { ok: true, message: `Bağlantı kuruldu: ${source} → ${target}` };
+    return { ok: true, message: `Connection created: ${source} → ${target}` };
   },
 
   // ─── Bottom dock (Faz 4) ───

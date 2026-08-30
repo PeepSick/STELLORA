@@ -37,6 +37,7 @@ export const en = {
   sourceGitGalaxy: 'Git Galaxy',
   sourceMismatchQuestion: 'Source mismatch?',
   sourceMismatchFlagged: 'Flagged as mismatch',
+  openAiChat: 'Open AI Chat',
 
   // ─── Photo/memory detail panel ───
   photoUnit: 'photo',
@@ -56,6 +57,26 @@ export const en = {
   peopleLabel: 'People',
   peoplePlaceholder: 'add names, comma separated…',
   photosOfDay: "This day's photos",
+
+  // ─── Dock panels: Dashboard / Systems / Orbs / Analytics / Archive ───
+  overview: 'Overview',
+  totalNodes: 'Total Nodes',
+  searchIndexLabel: 'Search Index',
+  connectionsLabel: 'Connections',
+  memoryDaysLabel: 'Memory Days',
+  activeSourceLabel: 'Active Source',
+  archivedMemoriesLabel: 'archived memories',
+  goToArchive: 'go to ARCHIVE',
+  noNodesYet: 'No nodes yet.',
+  generalLabel: 'General',
+  bySourceLabel: 'By Source',
+  byTypeLabel: 'By Type',
+  topTagsLabel: 'Top Tags',
+  memoryMarksLabel: 'Memory Marks',
+  noArchivedMemories: 'No archived memories. Mark a memory with 🕓 in its panel to move it here.',
+  removeFromArchive: 'Remove from archive',
+  modelNamePlaceholder: 'model name',
+  emptyReply: '(empty reply)',
 
   // ─── Settings panel ───
   settings: 'Settings',

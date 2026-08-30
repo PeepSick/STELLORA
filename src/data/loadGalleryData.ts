@@ -41,8 +41,9 @@ function dayKeyFromIso(iso: string): string {
 
 async function buildPhotoMeta(filepath: string, url: string): Promise<{ dayKey: string; meta: StellorPhotoMetadata }> {
   const filename = filepath.split('/').pop() || 'photo.jpg';
+  const lang = resolveLanguage(useStellarisStore.getState().features.language);
   const notes = PHOTO_NOTES[filename] ?? {
-    scene: `Fotoğraf — ${filename}`,
+    scene: lang === 'tr' ? `Fotoğraf — ${filename}` : `Photo — ${filename}`,
     tags: [],
     peopleObserved: 0,
   };

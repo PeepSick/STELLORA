@@ -3,8 +3,10 @@ import { ArrowRight, Activity, ShieldCheck, Zap, X, Tag, Link2, Calendar, FileTe
 import { useStellarisStore } from '@/store';
 import { NODE_VISUALS } from '@/types';
 import { PhotoDetailPanel } from './PhotoDetailPanel';
+import { useTranslation } from '@/i18n';
 
 export const ContextPanel: React.FC = () => {
+  const { t } = useTranslation();
   const { selectedNodeId, selectNode, getSelectedNode, getConnectedNodes, focusOnNode, toggleChat } = useStellarisStore();
   const selectedNode = getSelectedNode();
   const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId) : [];
@@ -193,7 +195,7 @@ export const ContextPanel: React.FC = () => {
       <div
         className={`my-3 flex flex-col items-center gap-2.5 shrink-0 bg-white/5 py-5 px-3 rounded-xl border border-white/5 relative group ${!selectedNode ? 'cursor-pointer hover:border-purple-400/30' : ''}`}
         onClick={!selectedNode ? () => toggleChat() : undefined}
-        title={!selectedNode ? 'AI Chat aç' : undefined}
+        title={!selectedNode ? t('openAiChat') : undefined}
       >
         {!selectedNode && (
           <span className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 text-[8px] font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">

@@ -36,6 +36,7 @@ export const tr: Partial<Record<TranslationKey, string>> = {
   sourceGitGalaxy: 'Git Galaksisi',
   sourceMismatchQuestion: 'Kaynak uyuşmuyor mu?',
   sourceMismatchFlagged: 'Uyuşmazlık işaretlendi',
+  openAiChat: 'AI Chat aç',
 
   // ─── Foto/anı detay paneli ───
   photoUnit: 'foto',
@@ -55,6 +56,26 @@ export const tr: Partial<Record<TranslationKey, string>> = {
   peopleLabel: 'Kişiler',
   peoplePlaceholder: 'virgülle ayırarak isim ekle…',
   photosOfDay: 'Bu günün fotoğrafları',
+
+  // ─── Dock panelleri: Dashboard / Systems / Orbs / Analytics / Archive ───
+  overview: 'Genel bakış',
+  totalNodes: 'Toplam Node',
+  searchIndexLabel: 'Arama İndeksi',
+  connectionsLabel: 'Bağlantı',
+  memoryDaysLabel: 'Anı Günü',
+  activeSourceLabel: 'Aktif Kaynak',
+  archivedMemoriesLabel: 'arşivlenmiş anı var',
+  goToArchive: "ARCHIVE'a git",
+  noNodesYet: 'Henüz node yok.',
+  generalLabel: 'Genel',
+  bySourceLabel: 'Kaynağa Göre',
+  byTypeLabel: 'Tipe Göre',
+  topTagsLabel: 'En Sık Etiketler',
+  memoryMarksLabel: 'Anı İşaretleri',
+  noArchivedMemories: 'Arşivlenmiş anı yok. Bir anıyı panelde 🕓 ile işaretleyerek buraya taşıyabilirsin.',
+  removeFromArchive: 'Arşivden çıkar',
+  modelNamePlaceholder: 'model adı',
+  emptyReply: '(boş cevap)',
 
   // ─── Settings panel ───
   settings: 'Ayarlar',
