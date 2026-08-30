@@ -5,6 +5,7 @@
 [![Built with React](https://img.shields.io/badge/Built%20with-React%2019-61DAFB.svg)](https://react.dev)
 [![Three.js](https://img.shields.io/badge/3D-Three.js-000000.svg)](https://threejs.org)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6.svg)](https://www.typescriptlang.org)
+[![MCP](https://img.shields.io/badge/MCP-Server-blue.svg)](https://modelcontextprotocol.io)
 
 ![Stellora hero](docs/hero.svg)
 
@@ -17,6 +18,8 @@ built with **React 19**, **Three.js** (`@react-three/fiber` + `drei` +
 
 No Stellora backend. Your data stays local unless you explicitly connect to an
 external provider or service (GitHub, Nominatim, or your chosen AI provider).
+The optional MCP server runs locally and exposes your data over stdio — no
+network traffic, no cloud.
 
 **At a glance**
 
@@ -27,6 +30,7 @@ external provider or service (GitHub, Nominatim, or your chosen AI provider).
 - 🚫 No backend
 - 📡 No telemetry
 - 🔑 Bring-your-own-key AI
+- 🔌 MCP Server (Claude / OpenCode / Cursor)
 - 🍴 Fork freely — just rename your fork
 
 ![Stellora walkthrough](docs/demo.gif)
@@ -74,6 +78,10 @@ external provider or service (GitHub, Nominatim, or your chosen AI provider).
   manually from Settings.
 - **Performance-aware** — an R3F `PerformanceMonitor` adapts render quality, and
   large corpora stay search-only until you opt in.
+- **MCP Server** — connect Claude Desktop, OpenCode, Cursor, or any
+  MCP-compatible AI tool to your galaxy. Access your notes, photo memories,
+  and finance corpus directly from your AI assistant. Ships as
+  `@stellora/mcp` with stdio transport.
 
 > **Privacy note:** No automated face or identity recognition is performed.
 > Stellora can count how many people appear in a photo (a number you supply),
@@ -122,6 +130,8 @@ Everything stays local to your browser (`localStorage`).
 | `npm run typecheck` | TypeScript type checking (`tsc --noEmit`) |
 | `npm run test` | Run unit tests (Vitest) |
 | `npm run lint` | Lint with ESLint |
+| `npm run mcp:build` | Build the MCP server |
+| `npm run mcp:start` | Start the MCP server (stdio) |
 
 ---
 
@@ -155,7 +165,98 @@ src/
   i18n/          English (base) + Turkish dictionaries and t()
   utils/         Galaxy math, theme presets, fuzzy search, memory score
   shaders/       Custom GLSL (orbs, connections, nebula, starfield)
+
+packages/
+  mcp/           MCP server — connect Claude/OpenCode/Cursor to your galaxy
 ```
+
+---
+
+## 🔌 MCP Server
+
+Stellora ships with a [Model Context Protocol](https://modelcontextprotocol.io)
+server (`@stellora/mcp`) so AI assistants can browse your knowledge base, photo
+memories, and finance corpus directly.
+
+### Available tools
+
+| Tool | Description |
+|------|-------------|
+| `notes_search` | Search knowledge galaxy by query |
+| `notes_read` | Read full note content by ID |
+| `notes_list` | List all notes with metadata |
+| `gallery_search` | Search photo memories |
+| `gallery_get` | Get a specific day's memory |
+| `gallery_list` | List all memory days |
+| `finance_search` | Search finance corpus (1,661 Turkish economy articles) |
+| `git_get` | Fetch recent commits from a GitHub repo |
+| `galaxy_stats` | Get galaxy statistics |
+| `galaxy_sources` | List available data sources |
+
+### Setup
+
+```bash
+cd packages/mcp
+npm install
+npm run build
+```
+
+### Claude Desktop
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`
+(macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "stellora": {
+      "command": "node",
+      "args": ["/absolute/path/to/stellora/packages/mcp/dist/index.js"],
+      "env": {
+        "STELLORA_DATA_DIR": "/absolute/path/to/stellora/src/data"
+      }
+    }
+  }
+}
+```
+
+### OpenCode
+
+Add to `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "mcpServers": {
+    "stellora": {
+      "command": "node",
+      "args": ["/absolute/path/to/stellora/packages/mcp/dist/index.js"],
+      "env": {
+        "STELLORA_DATA_DIR": "/absolute/path/to/stellora/src/data"
+      }
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to `.cursor/mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "stellora": {
+      "command": "node",
+      "args": ["/absolute/path/to/stellora/packages/mcp/dist/index.js"],
+      "env": {
+        "STELLORA_DATA_DIR": "/absolute/path/to/stellora/src/data"
+      }
+    }
+  }
+}
+```
+
+See [`packages/mcp/README.md`](packages/mcp/README.md) for full documentation.
 
 ---
 

@@ -21,7 +21,11 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "mcp:build": "cd packages/mcp && npm run build",
+    "mcp:dev": "cd packages/mcp && npm run dev",
+    "mcp:test": "cd packages/mcp && npm test",
+    "mcp:start": "cd packages/mcp && npm start"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.0",
@@ -40,6 +44,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@tailwindcss/vite": "4.1.17",
     "@types/node": "22.19.17",
     "@types/react": "19.2.7",

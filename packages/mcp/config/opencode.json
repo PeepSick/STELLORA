@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "stellora": {
+      "command": "node",
+      "args": ["<STELLORA_PATH>/packages/mcp/dist/index.js"],
+      "env": {
+        "STELLORA_DATA_DIR": "<STELLORA_PATH>/src/data"
+      }
+    }
+  }
+}
