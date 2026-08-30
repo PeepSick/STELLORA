@@ -50,6 +50,11 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
         const baseScale = (visualConfig?.baseSize || 1.0) * NODE_SCALE_MULTIPLIER;
         let scale = nodeSize * baseScale;
 
+        // Per-node size override (e.g. the finance corpus shrinks itself to
+        // 0.5 when promoted to 3D — without this it never took effect and
+        // 1661 full-size glow sprites reproduced the original whiteout bug).
+        if (typeof node.size === 'number') scale *= node.size;
+
         if (node.importance >= 4) scale *= 1.25;
         if (isSelected) scale *= 1.5;
         else if (isHovered) scale *= 1.2;
