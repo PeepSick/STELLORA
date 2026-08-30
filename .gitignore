@@ -5,3 +5,21 @@ dist/
 .env
 .env.*
 .claude/settings.local.json
+
+# Ships as an empty template — your own notes/photos/audio/reference corpus
+# go here, but never get committed to this repo. Only the placeholder
+# README in each folder stays tracked.
+src/data/business/*
+!src/data/business/README.md
+src/data/ops/*
+!src/data/ops/README.md
+src/data/product/*
+!src/data/product/README.md
+src/data/sourcing/*
+!src/data/sourcing/README.md
+src/data/economy/finance/*
+!src/data/economy/finance/README.md
+src/data/gallery/*
+!src/data/gallery/README.md
+src/data/music/*
+!src/data/music/README.md

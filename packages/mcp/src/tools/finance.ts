@@ -38,4 +38,30 @@ export function registerFinanceTools(server: McpServer, getFinanceNotes: () => P
       };
     }
   );
+
+  server.tool(
+    'finance_read',
+    'Read the full content of a Stellora finance/economy corpus article by its ID. finance_search only returns a truncated description — use this to get the whole article.',
+    { id: z.string().describe('Article ID (kebab-case filename, e.g. "1944-bolu-gerede-depremi")') },
+    async ({ id }) => {
+      const notes = getFinanceNotes();
+      const note = notes.find((n) => n.id === id);
+
+      if (!note) {
+        return {
+          content: [{ type: 'text' as const, text: `Finance article not found: ${id}` }],
+          isError: true,
+        };
+      }
+
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text: `# ${note.title}\n\n**ID:** ${note.id}\n\n---\n\n${note.content}`,
+          },
+        ],
+      };
+    }
+  );
 }

@@ -6,20 +6,24 @@ import type { StellarisNode, StellarisConnection, StellarisNodeType } from '@/ty
 // spatial 3D orbs whites out the scene (thousands of overlapping additive
 // glow sprites) and tanks performance. It's loaded separately, search-only,
 // via loadFinanceSearchIndex() below.
+// README.md placeholders (left in each empty data folder so a fresh clone
+// still shows what goes where on GitHub) are explicitly excluded — they're
+// instructions, not notes, and shouldn't become fake nodes.
 const mdModules = import.meta.glob(
   [
     '/src/data/business/**/*.md',
     '/src/data/ops/**/*.md',
     '/src/data/product/**/*.md',
-    '/src/data/sourcing/**/*.md'
+    '/src/data/sourcing/**/*.md',
+    '!**/README.md',
   ],
   { query: '?raw', eager: true }
 ) as Record<string, any>;
 
-const financeModules = import.meta.glob('/src/data/economy/finance/**/*.md', {
-  query: '?raw',
-  eager: true,
-}) as Record<string, any>;
+const financeModules = import.meta.glob(
+  ['/src/data/economy/finance/**/*.md', '!**/README.md'],
+  { query: '?raw', eager: true }
+) as Record<string, any>;
 
 function buildNodesFromModules(
   modules: Record<string, any>

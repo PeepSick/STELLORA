@@ -44,6 +44,10 @@ export function scanDirectory(dir: string, ext: string): string[] {
   try {
     const entries = readdirSync(dir);
     for (const entry of entries) {
+      // README.md is the "drop your files here" placeholder left in every
+      // empty data folder — it's instructions, not a note, and shouldn't
+      // show up as one.
+      if (entry.toLowerCase() === 'readme.md') continue;
       const full = join(dir, entry);
       const stat = statSync(full);
       if (stat.isDirectory()) {
