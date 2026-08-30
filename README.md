@@ -37,6 +37,27 @@ network traffic, no cloud.
 
 ---
 
+## 🎬 Demo video
+
+<!--
+  HOW TO ADD THE VIDEO:
+  Easiest path — GitHub hosts video files dropped into any text box (an
+  issue, a PR, a draft comment) and gives you a permanent CDN URL. Drag the
+  .mp4 into a new issue/comment on this repo, copy the generated URL
+  (looks like https://github.com/user-attachments/assets/xxxxxxxx-...),
+  then replace this whole comment block with that URL on its own line —
+  GitHub renders it as an inline HTML5 player automatically, no <video>
+  tag needed. Delete the draft issue/comment afterwards; the asset URL
+  keeps working on its own.
+
+  Alternative — YouTube: replace this block with
+    [![Watch the demo](docs/video-thumbnail.png)](https://youtu.be/VIDEO_ID)
+-->
+
+*(full walkthrough video — coming soon)*
+
+---
+
 ## ✨ Features
 
 - **Knowledge Galaxy** — Markdown notes rendered as a 3D knowledge graph. Each
@@ -47,10 +68,10 @@ network traffic, no cloud.
   reverse-geocoded place names (OpenStreetMap/Nominatim — no API key), and a
   per-day story field with manual Favorite / Important / Archived marks that feed
   a **Memory Score** driving how prominently each day's star renders.
-- **Finance Corpus in 3D** *(toggle)* — the 1,661-file economy/finance reference
-  archive is searchable by default and can be promoted to a full 3D node field
-  from Settings (sized down so thousands of glow sprites don't white out the
-  scene).
+- **Finance Corpus in 3D** *(toggle)* — drop economy/finance reference files into
+  `src/data/economy/finance` and they're searchable by default, with an option
+  to promote the whole corpus to a full 3D node field from Settings (sized down
+  so a large archive of glow sprites doesn't white out the scene).
 - **Music Galaxy** *(toggle)* — drop audio files into `src/data/music/` and they
   appear automatically as nodes (same auto-discovery pattern as the gallery).
   No external API key required.
@@ -65,11 +86,18 @@ network traffic, no cloud.
   connections, settings, AI config, marks) as a JSON file.
 - **Theme Engine** — Dark / Light / Aurora / Custom presets applied live via CSS
   variables.
-- **AI Chat** — click the core orb to open a chat panel that browses your node
-  graph and can create connections on request. **Bring-your-own-key**: Claude,
-  OpenAI, DeepSeek, Z.AI, or any OpenAI-compatible endpoint. Voice input/output
-  uses the browser's built-in Web Speech API. API keys are stored in browser
-  `localStorage` — use a browser profile/device you trust.
+- **AI Chat (agentic)** — click the core orb to open a chat panel backed by real
+  tool-calling, not just text replies: the model can search your memory days by
+  date/date-range/location/people-count/free-text (`gallery_search`), open a
+  match in the 3D view (`open_memory`), browse the node graph (`list_nodes`),
+  and create connections (`connect_nodes`). **Bring-your-own-key**: Claude,
+  OpenAI, DeepSeek, Z.AI, or any OpenAI-compatible endpoint — keys stay in
+  browser `localStorage` and go straight to the provider. **Vertex AI (Google)**
+  is also supported, but *not* as bring-your-own-key: a service-account private
+  key must never live in the browser, so Vertex routes through a small local
+  proxy you run yourself (`server/vertex-proxy.mjs`, see its
+  [README](server/README.md)) that holds the credential server-side. Voice
+  input/output uses the browser's built-in Web Speech API.
 - **Free forever. Bring your own AI key.** 🔑 No paid tier, no metered API on our
   side, no cost to self-host — you only pay your chosen provider for the tokens
   you use.
@@ -115,7 +143,21 @@ needed):
 ### AI chat setup
 
 Go to **SETTINGS → AI PROVIDER**, pick a provider, and paste your own API key.
-Everything stays local to your browser (`localStorage`).
+For Claude, OpenAI, DeepSeek, Z.AI, or a custom OpenAI-compatible endpoint,
+that's it — everything stays local to your browser (`localStorage`).
+
+For **Vertex AI (Google)**, run the local proxy first (it keeps your
+service-account credential out of the browser):
+
+```bash
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json \
+VERTEX_PROJECT_ID=your-gcp-project \
+npm run vertex-proxy
+```
+
+Then in Settings, pick **vertex** and set the "API Key" field to the proxy's
+URL (e.g. `http://localhost:8787/vertex-chat`) — not a credential, just where
+to send requests. See [`server/README.md`](server/README.md) for details.
 
 ---
 
@@ -138,8 +180,9 @@ Everything stays local to your browser (`localStorage`).
 ## ⚙️ Feature flags
 
 Every optional galaxy feature is gated behind a flag in **Settings** (stored in
-`localStorage`). Defaults keep the app lean — only the Knowledge and Stellora
-graphs are active out of the box:
+`localStorage`). All flags default to **on** and every galaxy source is shown
+out of the box, so a fresh clone shows everything at first launch — turn off
+what you don't need:
 
 - Finance Corpus in 3D
 - Timeline View
@@ -188,7 +231,8 @@ memories, and finance corpus directly.
 | `gallery_search` | Search photo memories |
 | `gallery_get` | Get a specific day's memory |
 | `gallery_list` | List all memory days |
-| `finance_search` | Search finance corpus (1,661 Turkish economy articles) |
+| `finance_search` | Search the finance/economy reference corpus |
+| `finance_read` | Read a finance article's full content by ID |
 | `git_get` | Fetch recent commits from a GitHub repo |
 | `galaxy_stats` | Get galaxy statistics |
 | `galaxy_sources` | List available data sources |
@@ -264,7 +308,9 @@ See [`packages/mcp/README.md`](packages/mcp/README.md) for full documentation.
 
 - **Client-side only.** No backend, no analytics, no telemetry.
 - **Bring-your-own-key AI.** Keys never leave your browser and go straight to
-  the provider you chose.
+  the provider you chose — except Vertex AI, which by design cannot be
+  browser-only (see [AI chat setup](#ai-chat-setup)) and instead uses a proxy
+  you run yourself, on your own machine.
 - **No face recognition.** People counts only; no identity claims.
 
 ---

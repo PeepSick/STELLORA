@@ -80,7 +80,8 @@ Add to `.cursor/mcp.json` in your project:
 | `gallery_search` | Search photo memories |
 | `gallery_get` | Get a specific day's memory |
 | `gallery_list` | List all memory days |
-| `finance_search` | Search finance corpus (1661 Turkish economy articles) |
+| `finance_search` | Search the finance/economy reference corpus |
+| `finance_read` | Read a finance article's full content by ID |
 | `git_get` | Fetch recent commits from a GitHub repo |
 | `galaxy_stats` | Get galaxy statistics |
 | `galaxy_sources` | List available data sources |
@@ -108,11 +109,11 @@ packages/mcp/
     index.ts          # CLI entry point
     server.ts         # MCP server setup
     tools/            # MCP tool definitions
-      notes.ts        # notes.search, notes.read, notes.list
-      gallery.ts      # gallery.search, gallery.get, gallery.list
-      finance.ts      # finance.search
-      git.ts          # git.get
-      galaxy.ts       # galaxy.stats, galaxy.sources
+      notes.ts        # notes_search, notes_read, notes_list
+      gallery.ts      # gallery_search, gallery_get, gallery_list
+      finance.ts      # finance_search, finance_read
+      git.ts          # git_get
+      galaxy.ts       # galaxy_stats, galaxy_sources
     resources/        # MCP resource definitions
       notes.ts        # stellora://notes
       gallery.ts      # stellora://gallery

@@ -5,7 +5,7 @@ import type { ParsedNote } from '../utils/markdown.js';
 export function registerFinanceTools(server: McpServer, getFinanceNotes: () => ParsedNote[]) {
   server.tool(
     'finance_search',
-    'Search the Stellora finance/economy corpus (1661 Turkish economy articles).',
+    'Search the Stellora finance/economy reference corpus (whatever markdown files the user has dropped into src/data/economy/finance).',
     { query: z.string().describe('Search query (multi-word, fuzzy match)'), limit: z.number().optional().describe('Max results to return (default 10)') },
     async ({ query, limit }) => {
       const notes = getFinanceNotes();
