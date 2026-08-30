@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 export interface StellorPhotoNote {
   scene: string;
   tags: string[];
+  peopleObserved?: number; // optional override; falls back to the loader's seed count when unset
 }
 
 const STORAGE_PREFIX = 'stellora-photo-';

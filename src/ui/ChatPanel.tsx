@@ -47,6 +47,7 @@ const CHAT_TOOLS: ChatTool[] = [
         date: { type: 'string', description: 'Exact day, "YYYY-MM-DD", or any-year match "MM-DD" (e.g. "12-25" for every Dec 25th)' },
         dateFrom: { type: 'string', description: 'Start of a date range, "YYYY-MM-DD" (inclusive)' },
         dateTo: { type: 'string', description: 'End of a date range, "YYYY-MM-DD" (inclusive)' },
+        month: { type: 'number', description: 'Match any day in this calendar month, 1-12 (e.g. 12 for "in December") — use this instead of guessing at "date" when you only know the month' },
         location: { type: 'string', description: 'Free-text place name substring to match against the reverse-geocoded location, e.g. "Antalya" or "Portland"' },
         peopleCount: { type: 'number', description: 'Match days where a photo shows exactly this many people' },
         query: { type: 'string', description: 'Free-text match against the scene description, tags, or story' },
@@ -92,16 +93,28 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
   }
 
   if (name === 'gallery_search') {
-    const { date, dateFrom, dateTo, location, peopleCount, query } = args as Record<string, unknown>;
+    const { date, dateFrom, dateTo, month, location, peopleCount, query } = args as Record<string, unknown>;
     const memoryNodes = store.nodes.filter((n) => Array.isArray((n.metadata as any)?.photos));
+
+    // The model doesn't always send a clean "YYYY-MM-DD" or "MM-DD" — it has sent
+    // things like "12-" when it only knows the month. Normalize defensively rather
+    // than silently filtering out every candidate on a malformed value.
+    const cleanDate = typeof date === 'string' ? date.trim().replace(/-+$/, '') : '';
 
     let candidates = memoryNodes.filter((n) => {
       const dayKey = dayKeyOf(n);
       if (!dayKey) return false;
-      if (typeof date === 'string' && date) {
-        if (date.length === 5) { if (dayKey.slice(5) !== date) return false; }
-        else if (dayKey !== date) return false;
+      if (cleanDate) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(cleanDate)) {
+          if (dayKey !== cleanDate) return false;
+        } else if (/^\d{2}-\d{2}$/.test(cleanDate)) {
+          if (dayKey.slice(5) !== cleanDate) return false;
+        } else if (/^\d{1,2}$/.test(cleanDate)) {
+          if (dayKey.slice(5, 7) !== cleanDate.padStart(2, '0')) return false;
+        }
+        // else: unrecognized format — ignore rather than exclude everything.
       }
+      if (typeof month === 'number' && dayKey.slice(5, 7) !== String(month).padStart(2, '0')) return false;
       if (typeof dateFrom === 'string' && dateFrom && dayKey < dateFrom) return false;
       if (typeof dateTo === 'string' && dateTo && dayKey > dateTo) return false;
       return true;
@@ -110,7 +123,10 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
     if (typeof peopleCount === 'number') {
       candidates = candidates.filter((n) => {
         const meta = n.metadata as unknown as StellorMemoryMetadata;
-        return meta.photos.some((p) => p.peopleObserved === peopleCount);
+        return meta.photos.some((p) => {
+          const override = readStellorPhotoNote(p.filename)?.peopleObserved;
+          return (override ?? p.peopleObserved) === peopleCount;
+        });
       });
     }
 
@@ -156,7 +172,14 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
     if (candidates.length === 0) return 'No matching memories found.';
     const results = candidates.slice(0, 10).map((n) => {
       const meta = n.metadata as unknown as StellorMemoryMetadata;
-      return { nodeId: n.id, dateLabel: meta.dateLabel, dayKey: meta.dayKey, peopleObserved: meta.peopleObserved, photoCount: meta.photos.length, summary: meta.daySummary };
+      // Report the owner's actual override, not the loader's static (usually 0) seed —
+      // otherwise the model sees a "peopleObserved: 0" field that contradicts the
+      // peopleCount it just filtered on and second-guesses a perfectly good match.
+      const peopleObserved = Math.max(
+        meta.peopleObserved,
+        ...meta.photos.map((p) => readStellorPhotoNote(p.filename)?.peopleObserved ?? 0)
+      );
+      return { nodeId: n.id, dateLabel: meta.dateLabel, dayKey: meta.dayKey, peopleObserved, photoCount: meta.photos.length, summary: meta.daySummary };
     });
     return JSON.stringify(results);
   }
