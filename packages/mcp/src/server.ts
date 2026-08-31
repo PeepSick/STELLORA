@@ -43,9 +43,9 @@ export async function createStelloraMcpServer(options: StelloraMcpOptions = {}) 
   const dataDir = options.dataDir ?? findDataDir();
 
   // Lazy-load data
-  let notes = loadAllNotes(dataDir);
-  let financeNotes = loadFinanceNotes(dataDir);
-  let photos = loadGalleryFiles(dataDir);
+  const notes = loadAllNotes(dataDir);
+  const financeNotes = loadFinanceNotes(dataDir);
+  const photos = loadGalleryFiles(dataDir);
 
   const getNotes = () => notes;
   const getFinanceNotes = () => financeNotes;

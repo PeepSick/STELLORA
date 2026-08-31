@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6.svg)](https://www.typescriptlang.org)
 [![MCP](https://img.shields.io/badge/MCP-Server-blue.svg)](https://modelcontextprotocol.io)
 
-![Stellora hero](docs/hero.svg)
+![Stellora — Your Memories, In Orbit.](docs/stellora-logo.png)
 
 **Every memory is a star. Every story is a constellation.**
 
@@ -74,7 +74,10 @@ network traffic, no cloud.
   so a large archive of glow sprites doesn't white out the scene).
 - **Music Galaxy** *(toggle)* — drop audio files into `src/data/music/` and they
   appear automatically as nodes (same auto-discovery pattern as the gallery).
-  No external API key required.
+  A default track (whichever loaded file is named "deep space", else the
+  first one found) starts on first interaction and keeps playing as you
+  browse Memory nodes — clicking a Music node cross-fades to its track
+  instead, never overlapping two at once. No external API key required.
 - **Git Galaxy** *(toggle)* — paste any public GitHub repository URL in Settings
   and its commits are fetched and rendered as a chained commit graph. GitHub API
   availability and rate limits may apply.
@@ -98,7 +101,11 @@ network traffic, no cloud.
   ships pre-filled for a local **Ollama** server so voice/chat works fully
   offline with no key at all — every provider is bring-your-own-key, kept in
   browser `localStorage`, sent straight to the provider you chose. Voice
-  input/output uses the browser's built-in Web Speech API.
+  replies use Gemini's own native TTS model when a real Gemini key is set
+  (noticeably better quality), and fall back to the browser's built-in
+  SpeechSynthesis otherwise — Talk always produces a spoken reply, key or
+  no key, and either path picks a voice matching the reply's actual
+  language rather than a fixed UI setting.
 - **Free forever. Bring your own AI key.** 🔑 No paid tier, no metered API on our
   side, no cost to self-host — you only pay your chosen provider for the tokens
   you use.
@@ -125,9 +132,28 @@ npm install
 npm run dev
 ```
 
-Open the printed local URL. Use the **left control panel** to switch galaxy
-sources, the **bottom dock** to open Dashboard / Systems / Orbs / Analytics /
-Archive / **Settings**, and click the **core orb** to chat with your graph.
+Open the printed local URL — that's the **marketing landing page** (`/`).
+The actual interactive galaxy lives at **`/app`** (click "Enter Live Demo" or
+go there directly: `http://localhost:5173/app`). The two are separate,
+lazily-loaded bundles — the landing page never downloads Three.js, and the
+app never downloads landing-only code.
+
+Once in the app: use the **left control panel** to switch galaxy sources, the
+**bottom dock** to open Dashboard / Systems / Orbs / Analytics / Archive /
+**Settings**, and click the **core orb** (or the **Talk** button beneath it)
+to chat with your graph.
+
+### Landing page config
+
+The landing page's CTAs are environment-configurable, no hardcoded URLs:
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `VITE_DEMO_URL` | `/app` | Where "Enter Live Demo" / "Enter Stellora" link to |
+| `VITE_DEMO_VIDEO_URL` | *(unset)* | Product-demo video URL — unset shows a "coming soon" placeholder instead of a fake video |
+
+Set these in a `.env.production` (or your host's environment variables) if
+the landing page and app are ever split across different domains/subdomains.
 
 ### Optional data folders
 
@@ -199,14 +225,19 @@ what you don't need:
 
 ```
 src/
+  main.tsx       Routing (/app vs landing) + lazy-loads both bundles
+  App.tsx        The Stellora app entry (mounted at /app)
+  Landing.tsx    Marketing landing page (mounted at /)
+  components/
+    landing/     Landing-only pieces (e.g. the animated starfield backdrop)
   galaxy/        Three.js scene, node & connection rendering, post-processing
   ui/            Control panel, context/detail panels, dock, chat, settings
   data/          Markdown/photo/music loaders (auto-discovery via import.meta.glob)
-  services/      AI chat client, GitHub fetcher, export/import
-  hooks/         localStorage-backed edits, audio engine, collab sync
+  services/      AI chat client (Gemini/Claude/OpenAI-compatible), TTS, GitHub fetcher, export/import
+  hooks/         localStorage-backed edits, audio engine, music controller, collab sync
   store/         Zustand store (single source of truth)
   i18n/          English (base) + Turkish dictionaries and t()
-  utils/         Galaxy math, theme presets, fuzzy search, memory score
+  utils/         Galaxy math, theme presets, fuzzy search, memory score, music player
   shaders/       Custom GLSL (orbs, connections, nebula, starfield)
 
 packages/
