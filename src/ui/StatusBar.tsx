@@ -37,6 +37,13 @@ export const StatusBar: React.FC = () => {
     updateGalaxy({ musicEnabled: next });
     if (next) {
       audioManager.playAmbient();
+      musicPlayer.resume();
+    } else {
+      // MUSIC means "all music" to anyone reading the button — it must mute
+      // the real Music Galaxy track too, not just the synthesized ambient
+      // drone (audioManager). Previously this only silenced the drone and
+      // left a real track playing, which read as the toggle being broken.
+      musicPlayer.pause();
     }
   };
 

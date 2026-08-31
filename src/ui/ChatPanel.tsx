@@ -9,6 +9,7 @@ import type { StellorMemoryMetadata } from '@/types';
 import { readStellorPhotoNote } from '@/hooks/useStellorPhotoNote';
 import { readStellorMemory } from '@/hooks/useStellorMemory';
 import { maybePlayMusicNode } from '@/utils/musicPlayer';
+import { synthesizeGeminiSpeech, speakWithBrowserTts, detectSpeechLocale } from '@/services/ttsService';
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -192,6 +193,12 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
     store.selectNode(nodeId);
     store.focusOnNode(nodeId);
     maybePlayMusicNode(node);
+    // Get out of the way of what was just opened — the chat animates back
+    // to the orb rather than sitting on top of the memory/photo it found.
+    // Conversation state isn't lost: ChatPanel stays mounted and reopening
+    // (the orb or Talk button) resumes the same thread, follow-up questions
+    // like "show me this photo" / "where was this taken?" keep working.
+    store.setChatOpen(false);
     return `Opened "${node.title}" in the 3D view.`;
   }
 
@@ -212,7 +219,7 @@ function getSpeechRecognitionCtor(): SpeechRecognitionCtor | null {
 }
 
 export const ChatPanel: React.FC = () => {
-  const { setChatOpen, setActiveDockTab, voiceAutoStart, clearVoiceAutoStart, voiceState, setVoiceState } = useStellarisStore();
+  const { isChatOpen, setChatOpen, setActiveDockTab, voiceAutoStart, clearVoiceAutoStart, voiceState, setVoiceState } = useStellarisStore();
   const { activeProvider, activeSettings, isConfigured } = useAiConfig();
   const { t, lang } = useTranslation();
   const speechLang = lang === 'tr' ? 'tr-TR' : 'en-US';
@@ -225,6 +232,7 @@ export const ChatPanel: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const speechSupported = typeof window !== 'undefined' && getSpeechRecognitionCtor() !== null;
   const ttsSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
@@ -238,6 +246,8 @@ export const ChatPanel: React.FC = () => {
   useEffect(() => {
     return () => {
       recognitionRef.current?.stop();
+      ttsAudioRef.current?.pause();
+      window.speechSynthesis?.cancel();
       setVoiceState('idle');
     };
   }, [setVoiceState]);
@@ -246,18 +256,43 @@ export const ChatPanel: React.FC = () => {
   // auto-start effect — declare them with refs-safe ordering via function
   // hoisting isn't available for arrow fns, so this effect is placed after.
 
-  const speak = (text: string) => {
-    if (!ttsEnabled || !ttsSupported || !text) {
+  // Talk/TTS works the same regardless of whether the user has a paid key:
+  // Gemini's own native voice when it's actually available (real API key,
+  // Gemini the active provider), otherwise the browser's built-in
+  // SpeechSynthesis — never just silently doing nothing for a no-key user.
+  // Either path picks the voice from the reply's actual language, not the
+  // static UI locale (see detectSpeechLocale).
+  const speak = async (text: string) => {
+    if (!ttsEnabled || !text.trim()) {
       setVoiceState('idle');
       return;
     }
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = speechLang;
+    ttsAudioRef.current?.pause();
+
     setVoiceState('speaking');
-    utterance.onend = () => setVoiceState('idle');
-    utterance.onerror = () => setVoiceState('idle');
-    window.speechSynthesis.speak(utterance);
+    const finish = () => setVoiceState('idle');
+
+    if (activeProvider === 'gemini' && activeSettings.apiKey) {
+      const objectUrl = await synthesizeGeminiSpeech(text, activeSettings.apiKey);
+      if (objectUrl) {
+        const audio = new Audio(objectUrl);
+        ttsAudioRef.current = audio;
+        audio.onended = () => { URL.revokeObjectURL(objectUrl); finish(); };
+        audio.onerror = () => { URL.revokeObjectURL(objectUrl); finish(); };
+        audio.play().catch(finish);
+        return;
+      }
+      // Gemini TTS call didn't work out (quota, transient error, model
+      // unavailable, …) — fall through to the browser voice below rather
+      // than leaving the user with no spoken reply at all.
+    }
+
+    if (!ttsSupported) {
+      finish();
+      return;
+    }
+    await speakWithBrowserTts(text, detectSpeechLocale(text), finish);
   };
 
   const handleSend = async (overrideText?: string) => {
@@ -330,9 +365,22 @@ export const ChatPanel: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Always mounted (never unmounted while the app runs) so `messages` and
+  // in-flight voice state survive minimizing — closing the panel just
+  // animates it back toward the core orb rather than resetting the
+  // conversation. Reopening (the orb or Talk button) picks up right where
+  // it left off. See the auto-minimize on open_memory below.
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-[420px] max-w-[92vw] max-h-[75vh] flex flex-col bg-[#0a0b18]/95 border border-white/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.7)] font-mono">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center transition-colors duration-300 ${
+        isChatOpen ? 'bg-black/50 backdrop-blur-sm pointer-events-auto' : 'bg-transparent pointer-events-none'
+      }`}
+    >
+      <div
+        className={`w-[420px] max-w-[92vw] max-h-[75vh] flex flex-col bg-[#0a0b18]/95 border border-white/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.7)] font-mono transition-all duration-300 ease-in origin-bottom-right ${
+          isChatOpen ? 'opacity-100 scale-100 translate-x-0 translate-y-0' : 'opacity-0 scale-0 translate-x-[40vw] translate-y-[40vh]'
+        }`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 shrink-0">
           <div className="flex items-center gap-2 min-w-0">

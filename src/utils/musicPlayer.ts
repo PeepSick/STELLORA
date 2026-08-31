@@ -88,6 +88,20 @@ class MusicPlayer {
     this.emit();
   }
 
+  /** Explicit pause — used by the status bar's MUSIC mute toggle, which
+   *  needs a direction, not a flip (calling toggle() from two independent
+   *  UI controls could fight over play/pause state). */
+  pause() {
+    this.audio?.pause();
+    this.emit();
+  }
+
+  /** Explicit resume of whatever track is already loaded, if any. */
+  resume() {
+    if (this.audio?.paused) this.audio.play().catch(() => {});
+    this.emit();
+  }
+
   setVolume(v: number) {
     this.volume = Math.max(0, Math.min(1, v));
     if (this.audio) this.audio.volume = this.volume;

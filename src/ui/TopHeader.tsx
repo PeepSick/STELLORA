@@ -72,10 +72,9 @@ export const TopHeader: React.FC = () => {
         <button
           title="Dashboard"
           onClick={() => openPanel('dashboard')}
-          className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-slate-300 hover:text-white transition-all relative"
+          className="w-9 h-9 rounded-xl bg-[#0e0f1d]/80 border border-white/10 hover:border-white/25 flex items-center justify-center text-slate-300 hover:text-white transition-all"
         >
           <Bell size={16} />
-          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
         </button>
         <button
           title="Settings"

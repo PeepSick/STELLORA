@@ -48,7 +48,6 @@ export function StellarisGalaxy({
     selectedNodeId,
     getSelectedNode,
     activeDockTab,
-    isChatOpen,
   } = useStellarisStore();
 
   const showFinance3D = useStellarisStore((s) => s.features.showFinance3D);
@@ -165,12 +164,12 @@ export function StellarisGalaxy({
           </div>
         )}
 
-        {/* AI Chat overlay */}
-        {isChatOpen && (
-          <div className="pointer-events-auto">
-            <ChatPanel />
-          </div>
-        )}
+        {/* AI Chat overlay — always mounted so its conversation/voice state
+            survives minimizing (ChatPanel itself animates open/closed based
+            on isChatOpen and disables its own pointer events while closed). */}
+        <div className="pointer-events-auto">
+          <ChatPanel />
+        </div>
       </div>
     </div>
   );
