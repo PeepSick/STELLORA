@@ -9,6 +9,7 @@ import type {
   AiProviderId,
   AiProviderSettings,
   FeatureSettings,
+  VoiceState,
 } from '@/types';
 import { DEFAULT_GALAXY_SETTINGS, DEFAULT_FEATURE_SETTINGS } from '@/types';
 
@@ -50,10 +51,12 @@ const AI_PROVIDER_DEFAULTS: Record<AiProviderId, AiProviderSettings> = {
   openai: { apiKey: '', baseUrl: 'https://api.openai.com/v1', model: 'gpt-4o-mini' },
   deepseek: { apiKey: '', baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat' },
   zai: { apiKey: '', baseUrl: 'https://open.bigmodel.cn/api/paas/v4', model: 'glm-4-plus' },
-  // apiKey here is the whole service-account JSON pasted as text; baseUrl
-  // doubles as the Vertex location (e.g. "global" or "us-central1").
-  vertex: { apiKey: '', baseUrl: 'global', model: 'gemini-2.5-flash' },
-  custom: { apiKey: '', baseUrl: '', model: '' },
+  // Gemini is the default provider — a normal Google AI Studio API key (not a
+  // service account), safe to keep client-side like every other provider here.
+  gemini: { apiKey: '', baseUrl: 'https://generativelanguage.googleapis.com', model: 'gemini-2.5-flash' },
+  // Custom ships pre-filled for a local Ollama server (OpenAI-compatible
+  // endpoint, no real key needed) — the user can point it anywhere else.
+  custom: { apiKey: 'ollama', baseUrl: 'http://localhost:11434/v1', model: 'llama3.2' },
 };
 
 function readAiConfig(): { activeProvider: AiProviderId; providers: Record<AiProviderId, AiProviderSettings> } {
@@ -62,14 +65,14 @@ function readAiConfig(): { activeProvider: AiProviderId; providers: Record<AiPro
     if (raw) {
       const parsed = JSON.parse(raw);
       return {
-        activeProvider: parsed.activeProvider ?? 'claude',
+        activeProvider: parsed.activeProvider === 'vertex' ? 'gemini' : (parsed.activeProvider ?? 'gemini'),
         providers: { ...AI_PROVIDER_DEFAULTS, ...parsed.providers },
       };
     }
   } catch {
     // ignore corrupt storage
   }
-  return { activeProvider: 'claude', providers: AI_PROVIDER_DEFAULTS };
+  return { activeProvider: 'gemini', providers: AI_PROVIDER_DEFAULTS };
 }
 
 const INITIAL_AI_CONFIG = readAiConfig();
@@ -119,6 +122,18 @@ interface StellarisStore {
   isChatOpen: boolean;
   setChatOpen: (open: boolean) => void;
   toggleChat: () => void;
+
+  // Set by the orb's "Talk" button: open the chat panel AND start listening
+  // immediately, for a one-click voice-only flow. ChatPanel consumes and
+  // resets this on mount so it only fires once per click.
+  voiceAutoStart: boolean;
+  openChatWithVoice: () => void;
+  clearVoiceAutoStart: () => void;
+
+  // Voice interaction state, shared so the orb (ContextPanel) can react
+  // visually to what ChatPanel's speech recognition/TTS is doing.
+  voiceState: VoiceState;
+  setVoiceState: (s: VoiceState) => void;
 
   // AI provider config (Faz 5, bring-your-own-key) — shared across Settings + Chat
   aiActiveProvider: AiProviderId;
@@ -242,6 +257,13 @@ export const useStellarisStore = create<StellarisStore>((set, get) => ({
   isChatOpen: false,
   setChatOpen: (open) => set({ isChatOpen: open }),
   toggleChat: () => set((s) => ({ isChatOpen: !s.isChatOpen })),
+
+  voiceAutoStart: false,
+  openChatWithVoice: () => set({ isChatOpen: true, voiceAutoStart: true }),
+  clearVoiceAutoStart: () => set({ voiceAutoStart: false }),
+
+  voiceState: 'idle',
+  setVoiceState: (voiceState) => set({ voiceState }),
 
   // ─── AI provider config (Faz 5) ───
   aiActiveProvider: INITIAL_AI_CONFIG.activeProvider,

@@ -76,6 +76,11 @@ export const tr: Partial<Record<TranslationKey, string>> = {
   removeFromArchive: 'Arşivden çıkar',
   modelNamePlaceholder: 'model adı',
   emptyReply: '(boş cevap)',
+  talkButton: 'Konuş',
+  voiceListening: 'Dinliyor…',
+  voiceProcessing: 'Düşünüyor…',
+  voiceSpeaking: 'Konuşuyor…',
+  thinkingLabel: 'düşünüyor…',
 
   // ─── Settings panel ───
   settings: 'Ayarlar',

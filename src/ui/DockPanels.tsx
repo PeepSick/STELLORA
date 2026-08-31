@@ -9,6 +9,7 @@ import { useTranslation } from '@/i18n';
 import { exportGalaxy, importGalaxyFile, readStellorMarks, readAiConfig, STELLOR_MARK_PREFIX } from '@/services/exportImport';
 import type { GalaxyExport } from '@/services/exportImport';
 import { fetchGitHubCommits } from '@/services/gitHub';
+import { maybePlayMusicNode } from '@/utils/musicPlayer';
 
 function isMemoryNode(node: StellarisNode): boolean {
   return Array.isArray((node.metadata as any)?.photos);
@@ -129,6 +130,7 @@ const SystemsContent: React.FC = () => {
                       selectNode(n.id);
                       focusOnNode(n.id);
                       setActiveDockTab('galaxy');
+                      maybePlayMusicNode(n);
                     }}
                     className="w-full text-left px-2 py-1 rounded-md text-[10px] text-slate-400 hover:text-white hover:bg-white/5 truncate"
                   >
@@ -161,6 +163,7 @@ const OrbsContent: React.FC = () => {
               selectNode(n.id);
               focusOnNode(n.id);
               setActiveDockTab('galaxy');
+              maybePlayMusicNode(n);
             }}
             className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-black/20 border border-white/5 hover:border-white/20 text-left transition-colors"
           >
@@ -341,7 +344,7 @@ const ArchiveContent: React.FC = () => {
   );
 };
 
-const PROVIDERS: AiProviderId[] = ['claude', 'openai', 'deepseek', 'zai', 'vertex', 'custom'];
+const PROVIDERS: AiProviderId[] = ['claude', 'openai', 'deepseek', 'zai', 'gemini', 'custom'];
 
 type FeatureFlagKey = keyof FeatureSettings;
 
@@ -426,43 +429,35 @@ const SettingsContent: React.FC = () => {
 
         <div className="space-y-2">
           <div>
-            <label className="text-[9px] text-slate-500 uppercase tracking-wider">
-              {activeProvider === 'vertex' ? 'Proxy URL' : 'API Key'}
-            </label>
+            <label className="text-[9px] text-slate-500 uppercase tracking-wider">API Key</label>
             <div className="flex items-center gap-1.5">
               <input
-                type={activeProvider === 'vertex' || showKey ? 'text' : 'password'}
+                type={showKey ? 'text' : 'password'}
                 value={activeSettings.apiKey}
                 onChange={(e) => updateProviderSettings(activeProvider, { apiKey: e.target.value })}
-                placeholder={activeProvider === 'vertex' ? 'http://localhost:8787/vertex-chat' : 'sk-… / ls_…'}
+                placeholder={activeProvider === 'custom' ? 'not required for Ollama' : 'sk-… / AIza…'}
                 className="flex-1 bg-black/30 border border-white/10 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50 font-mono"
               />
-              {activeProvider !== 'vertex' && (
-                <button
-                  onClick={() => setShowKey((v) => !v)}
-                  className="w-8 h-8 shrink-0 rounded-lg bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-400"
-                >
-                  {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
-                </button>
-              )}
+              <button
+                onClick={() => setShowKey((v) => !v)}
+                className="w-8 h-8 shrink-0 rounded-lg bg-white/5 hover:bg-white/15 flex items-center justify-center text-slate-400"
+              >
+                {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
+              </button>
             </div>
-            {activeProvider === 'vertex' && (
+            {activeProvider === 'gemini' && (
               <p className="text-[9px] text-slate-500 mt-1 leading-relaxed">
-                Not a credential — the URL of a local proxy that holds your Vertex service
-                account server-side. See <code className="text-slate-400">server/vertex-proxy.mjs</code>. Never paste a
-                private key here.
+                Get a free key from <code className="text-slate-400">aistudio.google.com/apikey</code>.
               </p>
             )}
           </div>
           <div>
-            <label className="text-[9px] text-slate-500 uppercase tracking-wider">
-              {activeProvider === 'vertex' ? 'Location' : 'Base URL'}
-            </label>
+            <label className="text-[9px] text-slate-500 uppercase tracking-wider">Base URL</label>
             <input
               type="text"
               value={activeSettings.baseUrl}
               onChange={(e) => updateProviderSettings(activeProvider, { baseUrl: e.target.value })}
-              placeholder={activeProvider === 'vertex' ? 'global or us-central1' : 'https://api.example.com/v1'}
+              placeholder="https://api.example.com/v1"
               className="w-full bg-black/30 border border-white/10 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50 font-mono"
             />
           </div>

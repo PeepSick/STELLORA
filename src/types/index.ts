@@ -15,17 +15,23 @@ export type GalaxyProvider = 'knowledge' | 'stellora' | 'all' | 'git' | 'music' 
 export type DockTabId = 'dashboard' | 'galaxy' | 'systems' | 'orbs' | 'analytics' | 'archive' | 'settings';
 
 // ─── AI chat providers (Faz 5) — bring-your-own-key, never a key baked into the app ───
-// 'vertex' is a bring-your-own-*service-account* provider: paste the whole
-// GCP service account JSON into the "API Key" field. Everything (JWT
-// signing, OAuth2 token exchange, the generateContent call) runs client-side
-// via the Web Crypto API — no backend, same as every other provider here.
-export type AiProviderId = 'claude' | 'openai' | 'deepseek' | 'zai' | 'vertex' | 'custom';
+// 'gemini' is the default provider (a normal Google AI Studio API key — not a
+// GCP service account — sent straight to Google like every other provider
+// here). 'custom' is any OpenAI-compatible endpoint; it ships pre-filled for
+// a local Ollama server but the user can point it anywhere.
+export type AiProviderId = 'claude' | 'openai' | 'deepseek' | 'zai' | 'gemini' | 'custom';
 
 export interface AiProviderSettings {
   apiKey: string;
   baseUrl: string;
   model: string;
 }
+
+// ─── Voice interaction (Talk button) state machine ───
+// idle -> listening (mic capturing speech) -> processing (AI query running)
+// -> speaking (TTS reading the reply back) -> idle. Shared via the store so
+// the orb can react visually regardless of whether ChatPanel is mounted.
+export type VoiceState = 'idle' | 'listening' | 'processing' | 'speaking';
 
 /** One photo inside a Stellora memory day — not a standalone rendered node. */
 export interface StellorPhotoMetadata {
@@ -265,7 +271,7 @@ export const NODE_VISUALS: Record<StellarisNodeType, NodeVisualConfig> = {
   custom:       { color: '#E2E8F0', emissiveIntensity: 1.0, baseSize: 1.0, glowStrength: 0.5, pulseSpeed: 0.4 },
   photo:        { color: '#FDE68A', emissiveIntensity: 1.1, baseSize: 1.3, glowStrength: 0.6, pulseSpeed: 0.3 },
   event:        { color: '#FB923C', emissiveIntensity: 1.4, baseSize: 1.6, glowStrength: 0.9, pulseSpeed: 0.25 },
-  audio:        { color: '#34D399', emissiveIntensity: 1.5, baseSize: 1.1, glowStrength: 0.7, pulseSpeed: 0.6 },
+  audio:        { color: '#FBBF24', emissiveIntensity: 1.5, baseSize: 1.1, glowStrength: 0.7, pulseSpeed: 0.6 },
   commit:       { color: '#F472B6', emissiveIntensity: 1.2, baseSize: 0.9, glowStrength: 0.5, pulseSpeed: 0.4 },
 };
 

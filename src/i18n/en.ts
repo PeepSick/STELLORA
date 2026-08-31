@@ -77,6 +77,11 @@ export const en = {
   removeFromArchive: 'Remove from archive',
   modelNamePlaceholder: 'model name',
   emptyReply: '(empty reply)',
+  talkButton: 'Talk',
+  voiceListening: 'Listening…',
+  voiceProcessing: 'Thinking…',
+  voiceSpeaking: 'Speaking…',
+  thinkingLabel: 'thinking…',
 
   // ─── Settings panel ───
   settings: 'Settings',

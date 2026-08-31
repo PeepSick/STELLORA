@@ -25,8 +25,7 @@
     "mcp:build": "cd packages/mcp && npm run build",
     "mcp:dev": "cd packages/mcp && npm run dev",
     "mcp:test": "cd packages/mcp && npm test",
-    "mcp:start": "cd packages/mcp && npm start",
-    "vertex-proxy": "node server/vertex-proxy.mjs"
+    "mcp:start": "cd packages/mcp && npm start"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.0",

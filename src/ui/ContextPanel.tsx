@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { ArrowRight, Activity, ShieldCheck, Zap, X, Tag, Link2, Calendar, FileText, Sparkles, Folder, MessageCircle } from 'lucide-react';
+import { ArrowRight, Activity, ShieldCheck, Zap, X, Tag, Link2, Calendar, FileText, Sparkles, Folder, MessageCircle, Mic, Loader2, Volume2 } from 'lucide-react';
 import { useStellarisStore } from '@/store';
 import { NODE_VISUALS } from '@/types';
 import { PhotoDetailPanel } from './PhotoDetailPanel';
@@ -7,7 +7,7 @@ import { useTranslation } from '@/i18n';
 
 export const ContextPanel: React.FC = () => {
   const { t } = useTranslation();
-  const { selectedNodeId, selectNode, getSelectedNode, getConnectedNodes, focusOnNode, toggleChat } = useStellarisStore();
+  const { selectedNodeId, selectNode, getSelectedNode, getConnectedNodes, focusOnNode, toggleChat, openChatWithVoice, voiceState } = useStellarisStore();
   const selectedNode = getSelectedNode();
   const connectedNodes = selectedNodeId ? getConnectedNodes(selectedNodeId) : [];
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -232,6 +232,38 @@ export const ContextPanel: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* One-click voice entry point — opens the chat panel and starts
+            listening immediately, no typing needed (see openChatWithVoice). */}
+        {!selectedNode && (
+          <button
+            onClick={(e) => { e.stopPropagation(); openChatWithVoice(); }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all ${
+              voiceState === 'listening'
+                ? 'bg-red-500/20 border-red-400/60 text-red-300 animate-pulse'
+                : voiceState === 'processing'
+                ? 'bg-amber-500/20 border-amber-400/60 text-amber-300'
+                : voiceState === 'speaking'
+                ? 'bg-purple-500/20 border-purple-400/60 text-purple-300 animate-pulse'
+                : 'bg-white/5 border-white/15 text-slate-300 hover:border-purple-400/40 hover:text-purple-200'
+            }`}
+          >
+            {voiceState === 'processing' ? (
+              <Loader2 size={11} className="animate-spin" />
+            ) : voiceState === 'speaking' ? (
+              <Volume2 size={11} />
+            ) : (
+              <Mic size={11} />
+            )}
+            {voiceState === 'listening'
+              ? t('voiceListening')
+              : voiceState === 'processing'
+              ? t('voiceProcessing')
+              : voiceState === 'speaking'
+              ? t('voiceSpeaking')
+              : t('talkButton')}
+          </button>
+        )}
       </div>
       )}
 

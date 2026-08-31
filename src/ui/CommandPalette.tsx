@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Command, Clock, ArrowRight, X } from 'lucide-react';
 import { useStellarisStore } from '@/store';
 import { fuzzySearch, getRecentSearches, saveRecentSearch } from '@/utils/fuzzySearch';
+import { maybePlayMusicNode } from '@/utils/musicPlayer';
 import { StellarisNode, SearchResult } from '@/types';
 
 export const CommandPalette: React.FC = () => {
@@ -48,6 +49,7 @@ export const CommandPalette: React.FC = () => {
     closeSearch();
     selectNode(item.node.id);
     focusOnNode(item.node.id);
+    maybePlayMusicNode(item.node);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

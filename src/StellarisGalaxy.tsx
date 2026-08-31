@@ -14,6 +14,7 @@ import { useKeyboard } from '@/hooks/useKeyboard';
 import { useIdleDetection } from '@/hooks/useIdleDetection';
 import { useCollabSync } from '@/hooks/useCollab';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
+import { useMusicController } from '@/hooks/useMusicController';
 import { useStellarisStore } from '@/store';
 import { calculateNodePositions } from '@/utils/galaxyMath';
 import { applyTheme } from '@/utils/themes';
@@ -63,6 +64,7 @@ export function StellarisGalaxy({
   useIdleDetection();
   useCollabSync();
   useAudioEngine();
+  useMusicController();
 
   useEffect(() => {
     // Merge optional node sources into the spatial graph based on their flags.

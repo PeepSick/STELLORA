@@ -8,6 +8,7 @@ import { useTranslation } from '@/i18n';
 import type { StellorMemoryMetadata } from '@/types';
 import { readStellorPhotoNote } from '@/hooks/useStellorPhotoNote';
 import { readStellorMemory } from '@/hooks/useStellorMemory';
+import { maybePlayMusicNode } from '@/utils/musicPlayer';
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -190,6 +191,7 @@ async function executeTool(name: string, args: Record<string, unknown>): Promise
     if (!node) return `Node not found: ${nodeId}`;
     store.selectNode(nodeId);
     store.focusOnNode(nodeId);
+    maybePlayMusicNode(node);
     return `Opened "${node.title}" in the 3D view.`;
   }
 
@@ -210,7 +212,7 @@ function getSpeechRecognitionCtor(): SpeechRecognitionCtor | null {
 }
 
 export const ChatPanel: React.FC = () => {
-  const { setChatOpen, setActiveDockTab } = useStellarisStore();
+  const { setChatOpen, setActiveDockTab, voiceAutoStart, clearVoiceAutoStart, voiceState, setVoiceState } = useStellarisStore();
   const { activeProvider, activeSettings, isConfigured } = useAiConfig();
   const { t, lang } = useTranslation();
   const speechLang = lang === 'tr' ? 'tr-TR' : 'en-US';
@@ -231,13 +233,58 @@ export const ChatPanel: React.FC = () => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, isLoading]);
 
-  // Stop any in-progress speech recognition when the panel unmounts
+  // Reset the shared voice state when the panel closes, so the orb doesn't
+  // get stuck showing "listening"/"speaking" after the panel is gone.
   useEffect(() => {
     return () => {
       recognitionRef.current?.stop();
+      setVoiceState('idle');
     };
-  }, []);
+  }, [setVoiceState]);
 
+  // handleSend/toggleListening are defined below but referenced by the
+  // auto-start effect — declare them with refs-safe ordering via function
+  // hoisting isn't available for arrow fns, so this effect is placed after.
+
+  const speak = (text: string) => {
+    if (!ttsEnabled || !ttsSupported || !text) {
+      setVoiceState('idle');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = speechLang;
+    setVoiceState('speaking');
+    utterance.onend = () => setVoiceState('idle');
+    utterance.onerror = () => setVoiceState('idle');
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleSend = async (overrideText?: string) => {
+    const text = (overrideText ?? input).trim();
+    if (!text || isLoading) return;
+    setError(null);
+    setInput('');
+    const nextHistory: ChatTurn[] = [...messages, { role: 'user', content: text }];
+    setMessages(nextHistory);
+    setIsLoading(true);
+    setVoiceState('processing');
+    try {
+      const reply = await runChat(activeProvider, activeSettings, systemPrompt(), nextHistory, CHAT_TOOLS, executeTool);
+      setMessages((prev) => [...prev, { role: 'assistant', content: reply || t('emptyReply') }]);
+      speak(reply);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unknown error');
+      setVoiceState('idle');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Same pipeline for typed and spoken input — this just supplies the text.
+  // Auto-sends on the final transcript so a voice command doesn't need a
+  // second click to submit (the user can still stop listening early via the
+  // mic/Talk button, which cancels before onresult ever fires).
   const toggleListening = () => {
     const Ctor = getSpeechRecognitionCtor();
     if (!Ctor) return;
@@ -251,41 +298,37 @@ export const ChatPanel: React.FC = () => {
     recognition.interimResults = false;
     recognition.onresult = (event: any) => {
       const transcript = event.results?.[0]?.[0]?.transcript ?? '';
-      setInput((prev) => (prev ? `${prev} ${transcript}` : transcript));
+      if (transcript.trim()) handleSend(transcript);
     };
-    recognition.onend = () => setIsListening(false);
-    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => {
+      setIsListening(false);
+      // Only reset to idle if nothing else (handleSend -> 'processing') has
+      // already moved the state forward — onresult -> handleSend can fire
+      // synchronously before onend does.
+      if (useStellarisStore.getState().voiceState === 'listening') setVoiceState('idle');
+    };
+    recognition.onerror = () => {
+      setIsListening(false);
+      setVoiceState('idle');
+    };
     recognitionRef.current = recognition;
     setIsListening(true);
+    setVoiceState('listening');
     recognition.start();
   };
 
-  const speak = (text: string) => {
-    if (!ttsEnabled || !ttsSupported || !text) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = speechLang;
-    window.speechSynthesis.speak(utterance);
-  };
-
-  const handleSend = async () => {
-    const text = input.trim();
-    if (!text || isLoading) return;
-    setError(null);
-    setInput('');
-    const nextHistory: ChatTurn[] = [...messages, { role: 'user', content: text }];
-    setMessages(nextHistory);
-    setIsLoading(true);
-    try {
-      const reply = await runChat(activeProvider, activeSettings, systemPrompt(), nextHistory, CHAT_TOOLS, executeTool);
-      setMessages((prev) => [...prev, { role: 'assistant', content: reply || t('emptyReply') }]);
-      speak(reply);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unknown error');
-    } finally {
-      setIsLoading(false);
+  // Fired by the orb's "Talk" button (openChatWithVoice sets isChatOpen +
+  // voiceAutoStart together) — start listening the instant the panel mounts,
+  // no extra click needed.
+  useEffect(() => {
+    if (voiceAutoStart && isConfigured && speechSupported) {
+      clearVoiceAutoStart();
+      toggleListening();
+    } else if (voiceAutoStart) {
+      clearVoiceAutoStart();
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -356,11 +399,27 @@ export const ChatPanel: React.FC = () => {
                   </div>
                 </div>
               ))}
+              {voiceState === 'listening' && (
+                <div className="flex justify-center">
+                  <div className="rounded-full px-3 py-1 bg-red-500/15 border border-red-400/40 text-red-300 flex items-center gap-1.5 animate-pulse">
+                    <Mic size={11} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">{t('voiceListening')}</span>
+                  </div>
+                </div>
+              )}
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="rounded-xl px-3 py-2 bg-white/5 border border-white/10 text-slate-400 flex items-center gap-1.5">
                     <Loader2 size={12} className="animate-spin" />
-                    <span className="text-[10px]">thinking…</span>
+                    <span className="text-[10px]">{voiceState === 'processing' ? t('voiceProcessing') : t('thinkingLabel')}</span>
+                  </div>
+                </div>
+              )}
+              {voiceState === 'speaking' && !isLoading && (
+                <div className="flex justify-center">
+                  <div className="rounded-full px-3 py-1 bg-purple-500/15 border border-purple-400/40 text-purple-300 flex items-center gap-1.5 animate-pulse">
+                    <Volume2 size={11} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">{t('voiceSpeaking')}</span>
                   </div>
                 </div>
               )}
@@ -393,7 +452,7 @@ export const ChatPanel: React.FC = () => {
                 className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-[11px] text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-purple-400/50"
               />
               <button
-                onClick={handleSend}
+                onClick={() => handleSend()}
                 disabled={isLoading || !input.trim()}
                 className="w-8 h-8 shrink-0 rounded-lg bg-purple-500/20 border border-purple-400/50 text-purple-200 flex items-center justify-center hover:bg-purple-500/30 disabled:opacity-40 disabled:cursor-not-allowed"
               >

@@ -4,6 +4,8 @@ import * as THREE from 'three';
 import { useStellarisStore } from '@/store';
 import { NODE_VISUALS } from '@/types';
 import { audioManager } from '@/utils/audio';
+import { maybePlayMusicNode } from '@/utils/musicPlayer';
+import { useMusicPlayerState } from '@/hooks/useMusicPlayerState';
 import type { StellorMemoryMetadata } from '@/types';
 import { MemoryNode } from './MemoryNode';
 import { computeMemoryScore, memoryScoreToScaleFactor } from '@/utils/memoryScore';
@@ -18,6 +20,7 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
   const { nodes, selectedNodeId, hoveredNodeId, galaxy, selectNode, hoverNode, focusOnNode } = useStellarisStore();
   const nodeSize = galaxy?.nodeSize ?? 1.0;
   const { t } = useTranslation();
+  const { currentTrackId, isPlaying } = useMusicPlayerState();
   // Bumped on every mismatch-flag toggle so the hover tag re-reads localStorage
   const [mismatchVersion, setMismatchVersion] = React.useState(0);
 
@@ -100,7 +103,13 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
               scale={scale * 1.4}
               onPointerOver={(e) => { e.stopPropagation(); hoverNode(node.id); document.body.style.cursor = 'pointer'; audioManager.playHover(); }}
               onPointerOut={() => { hoverNode(null); document.body.style.cursor = 'auto'; }}
-              onClick={(e) => { e.stopPropagation(); selectNode(node.id); focusOnNode(node.id); audioManager.playSelect(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                selectNode(node.id);
+                focusOnNode(node.id);
+                audioManager.playSelect();
+                maybePlayMusicNode(node);
+              }}
               visible={false}
             >
               <sphereGeometry args={[1.0, 8, 8]} />
@@ -151,6 +160,23 @@ export const KnowledgeNodes: React.FC = React.memo(() => {
                 />
               </mesh>
             </Billboard>
+
+            {/* Music node marker — a note badge that pulses while this exact
+                track is the one currently playing, so "which track is this"
+                and "is this the one playing" are both readable at a glance. */}
+            {node.type === 'audio' && (
+              <Html center position={[0, scale * 2.0, 0]} style={{ pointerEvents: 'none' }} zIndexRange={[8, 0]}>
+                <div
+                  className={`flex items-center justify-center w-5 h-5 rounded-full border text-[11px] ${
+                    node.id === currentTrackId && isPlaying
+                      ? 'bg-amber-400/30 border-amber-300/80 animate-pulse'
+                      : 'bg-amber-400/15 border-amber-300/40'
+                  }`}
+                >
+                  🎵
+                </div>
+              </Html>
+            )}
 
             {/* Hover label — node title + source tag, floating just below the orb */}
             {isHovered && (() => {

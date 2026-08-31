@@ -136,29 +136,19 @@ async function runOpenAiCompatible(
   return 'Tool calls took too long — no reply received.';
 }
 
-// ── Vertex AI (proxied — never client-side credentials) ──
-// A Vertex service account is a long-lived, broad-access GCP credential
-// signed with an RSA private key — unlike a per-user API key, it must never
-// exist in browser-reachable storage (localStorage, memory, devtools). So
-// unlike every other provider here, "Vertex" in Settings does not hold a
-// credential at all: the "API Key" field holds the URL of a small local
-// proxy (see server/vertex-proxy.mjs) that holds the real credential and
-// does the JWT-sign → OAuth2 → generateContent dance server-side. This
-// function only ever talks to that proxy, and the proxy only ever proxies —
-// tool EXECUTION still happens here in the browser, since tools need live
-// 3D-scene state (selected node, gallery contents, etc.) the proxy can't see.
-async function runVertex(
+// ── Gemini (Google AI Studio API key — client-side like every other provider) ──
+// This is a normal per-user API key with its own quota, not a GCP service
+// account — safe to keep in browser localStorage and send straight to Google,
+// exactly like the Claude/OpenAI/DeepSeek/Z.AI paths above. No proxy needed.
+async function runGemini(
   settings: AiProviderSettings,
   systemPrompt: string,
   history: ChatTurn[],
   tools: ChatTool[],
   executeTool: ToolExecutor
 ): Promise<string> {
-  const proxyUrl = settings.apiKey; // holds a URL for this provider, not a credential
-  if (!/^https?:\/\//.test(proxyUrl)) {
-    throw new Error('Vertex: enter a proxy URL in the "API Key" field (e.g. http://localhost:8787/vertex-chat) — see server/vertex-proxy.mjs.');
-  }
-  const location = settings.baseUrl || 'global';
+  const base = stripTrailingSlash(settings.baseUrl || 'https://generativelanguage.googleapis.com');
+  const url = `${base}/v1beta/models/${encodeURIComponent(settings.model)}:generateContent?key=${encodeURIComponent(settings.apiKey)}`;
 
   const contents: Array<{ role: string; parts: any[] }> = history.map((t) => ({
     role: t.role === 'assistant' ? 'model' : 'user',
@@ -169,20 +159,18 @@ async function runVertex(
     : undefined;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    const res = await fetch(proxyUrl, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         contents,
         systemInstruction: { parts: [{ text: systemPrompt }] },
         ...(geminiTools ? { tools: geminiTools } : {}),
-        model: settings.model,
-        location,
       }),
     });
     if (!res.ok) {
       const body = await res.text().catch(() => '');
-      throw new Error(`Vertex proxy error (${res.status}): ${body.slice(0, 300)}`);
+      throw new Error(`Gemini API error (${res.status}): ${body.slice(0, 300)}`);
     }
     const data = await res.json();
     const parts: any[] = data.candidates?.[0]?.content?.parts ?? [];
@@ -223,14 +211,14 @@ export async function runChat(
   if (provider === 'claude') {
     return runAnthropic(settings, systemPrompt, history, tools, executeTool);
   }
-  if (provider === 'vertex') {
-    return runVertex(settings, systemPrompt, history, tools, executeTool);
+  if (provider === 'gemini') {
+    return runGemini(settings, systemPrompt, history, tools, executeTool);
   }
-  const labels: Record<Exclude<AiProviderId, 'claude' | 'vertex'>, string> = {
+  const labels: Record<Exclude<AiProviderId, 'claude' | 'gemini'>, string> = {
     openai: 'OpenAI',
     deepseek: 'DeepSeek',
     zai: 'Z.AI',
     custom: 'Custom',
   };
-  return runOpenAiCompatible(settings, labels[provider as Exclude<AiProviderId, 'claude' | 'vertex'>], systemPrompt, history, tools, executeTool);
+  return runOpenAiCompatible(settings, labels[provider as Exclude<AiProviderId, 'claude' | 'gemini'>], systemPrompt, history, tools, executeTool);
 }

@@ -23,12 +23,3 @@ src/data/gallery/*
 !src/data/gallery/README.md
 src/data/music/*
 !src/data/music/README.md
-
-# Never allow a real credential to be committed from this repo's own
-# server/ folder — the Vertex proxy (server/vertex-proxy.mjs) is designed to
-# read its service account from an external path via GOOGLE_APPLICATION_CREDENTIALS,
-# but these patterns are a safety net in case someone drops one in-tree anyway.
-server/*.json
-!server/package.json
-*.serviceaccount.json
-sa.json

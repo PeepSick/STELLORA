@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, VolumeX, Music, Moon, Sun } from 'lucide-react';
+import { Volume2, VolumeX, Music, Moon, Sun, Play, Pause } from 'lucide-react';
 import { useStellarisStore } from '@/store';
 import { audioManager } from '@/utils/audio';
+import { musicPlayer } from '@/utils/musicPlayer';
+import { useMusicPlayerState } from '@/hooks/useMusicPlayerState';
 
 export const StatusBar: React.FC = () => {
-  const { galaxy, updateGalaxy } = useStellarisStore();
+  const { galaxy, updateGalaxy, musicNodes } = useStellarisStore();
   const [timeString, setTimeString] = useState('21:48:37 UTC');
+  const trackState = useMusicPlayerState();
+  const currentTrack = musicNodes.find((n) => n.id === trackState.currentTrackId);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -63,7 +67,22 @@ export const StatusBar: React.FC = () => {
 
       {/* Right: Audio / Theme Toggles */}
       <div className="flex items-center gap-4">
-        <button 
+        {/* Now Playing — the real Music Galaxy track (separate from the
+            synthesized ambient drone the MUSIC toggle below controls).
+            Same central playback state a Music Node click or the future
+            Music Panel would drive; see utils/musicPlayer.ts. */}
+        {currentTrack && (
+          <button
+            onClick={() => musicPlayer.toggle()}
+            className="flex items-center gap-1.5 text-purple-300 hover:text-purple-100 transition-colors max-w-[180px]"
+            title={trackState.isPlaying ? 'Pause' : 'Play'}
+          >
+            {trackState.isPlaying ? <Pause size={12} /> : <Play size={12} />}
+            <span className="truncate">{currentTrack.title}</span>
+          </button>
+        )}
+
+        <button
           onClick={toggleSound}
           className={`flex items-center gap-1.5 hover:text-white transition-colors ${galaxy.soundEnabled ? 'text-slate-300' : 'text-slate-600'}`}
         >

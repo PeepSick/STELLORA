@@ -86,17 +86,18 @@ network traffic, no cloud.
   connections, settings, AI config, marks) as a JSON file.
 - **Theme Engine** — Dark / Light / Aurora / Custom presets applied live via CSS
   variables.
-- **AI Chat (agentic)** — click the core orb to open a chat panel backed by real
-  tool-calling, not just text replies: the model can search your memory days by
-  date/date-range/location/people-count/free-text (`gallery_search`), open a
-  match in the 3D view (`open_memory`), browse the node graph (`list_nodes`),
-  and create connections (`connect_nodes`). **Bring-your-own-key**: Claude,
-  OpenAI, DeepSeek, Z.AI, or any OpenAI-compatible endpoint — keys stay in
-  browser `localStorage` and go straight to the provider. **Vertex AI (Google)**
-  is also supported, but *not* as bring-your-own-key: a service-account private
-  key must never live in the browser, so Vertex routes through a small local
-  proxy you run yourself (`server/vertex-proxy.mjs`, see its
-  [README](server/README.md)) that holds the credential server-side. Voice
+- **AI Chat (agentic) + Talk button** — click the core orb to open a chat panel
+  backed by real tool-calling, not just text replies: the model can search
+  your memory days by date/date-range/location/people-count/free-text
+  (`gallery_search`), open a match in the 3D view (`open_memory`), browse the
+  node graph (`list_nodes`), and create connections (`connect_nodes`). The
+  **Talk** button right under the orb skips typing entirely — one click starts
+  listening, the transcript goes through the exact same pipeline as typed
+  text, and the reply is read back with text-to-speech. **Gemini** (Google AI
+  Studio) is the default provider; **Custom** (any OpenAI-compatible endpoint)
+  ships pre-filled for a local **Ollama** server so voice/chat works fully
+  offline with no key at all — every provider is bring-your-own-key, kept in
+  browser `localStorage`, sent straight to the provider you chose. Voice
   input/output uses the browser's built-in Web Speech API.
 - **Free forever. Bring your own AI key.** 🔑 No paid tier, no metered API on our
   side, no cost to self-host — you only pay your chosen provider for the tokens
@@ -143,21 +144,20 @@ needed):
 ### AI chat setup
 
 Go to **SETTINGS → AI PROVIDER**, pick a provider, and paste your own API key.
-For Claude, OpenAI, DeepSeek, Z.AI, or a custom OpenAI-compatible endpoint,
-that's it — everything stays local to your browser (`localStorage`).
+Everything stays local to your browser (`localStorage`) and is sent straight
+to the provider you chose — no backend in between.
 
-For **Vertex AI (Google)**, run the local proxy first (it keeps your
-service-account credential out of the browser):
-
-```bash
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json \
-VERTEX_PROJECT_ID=your-gcp-project \
-npm run vertex-proxy
-```
-
-Then in Settings, pick **vertex** and set the "API Key" field to the proxy's
-URL (e.g. `http://localhost:8787/vertex-chat`) — not a credential, just where
-to send requests. See [`server/README.md`](server/README.md) for details.
+- **Gemini** (default) — get a free key from
+  [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and paste
+  it in. This is a normal per-user API key, not a GCP service account, so it's
+  safe to keep client-side like every other provider here.
+- **Claude / OpenAI / DeepSeek / Z.AI** — paste your key from that provider.
+- **Custom** — any OpenAI-compatible `/chat/completions` endpoint. Ships
+  pre-filled for a local [Ollama](https://ollama.com) server
+  (`http://localhost:11434/v1`, no real key needed) so chat/voice works fully
+  offline — just run `ollama pull llama3.2` (or your model of choice) and
+  make sure Ollama is running. Change the Base URL/model to point anywhere
+  else.
 
 ---
 
@@ -308,9 +308,8 @@ See [`packages/mcp/README.md`](packages/mcp/README.md) for full documentation.
 
 - **Client-side only.** No backend, no analytics, no telemetry.
 - **Bring-your-own-key AI.** Keys never leave your browser and go straight to
-  the provider you chose — except Vertex AI, which by design cannot be
-  browser-only (see [AI chat setup](#ai-chat-setup)) and instead uses a proxy
-  you run yourself, on your own machine.
+  the provider you chose — including Gemini, a normal per-user API key with
+  its own quota, not a broad-access GCP credential.
 - **No face recognition.** People counts only; no identity claims.
 
 ---
