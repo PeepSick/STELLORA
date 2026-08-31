@@ -6,7 +6,10 @@ import { loadMusicNodes } from '@/data/loadMusicData';
 import { seedDemoContentOnce } from '@/data/seedDemoContent';
 import { useStellarisStore } from '@/store';
 import type { StellarisNode, StellarisConnection } from '@/types';
-import './index.css';
+// index.css (Tailwind) is imported once in main.tsx, ahead of either lazy
+// route, so both App and Landing get styled — this file used to import it
+// itself, which meant Landing (bundled separately, never touching App.tsx)
+// rendered with zero CSS at all.
 
 // Runs once at module load, synchronously, before anything reads localStorage
 // for photo/memory content — see seedDemoContent.ts for why this exists.
@@ -21,6 +24,13 @@ seedDemoContentOnce();
  * Run with: npm run dev
  */
 export default function App() {
+  // index.html's <title> is tuned for the landing page (the more common
+  // entry point for SEO/sharing) — restore the app's own descriptive title
+  // once the actual Stellora experience mounts.
+  useEffect(() => {
+    document.title = 'Stellora — Living Knowledge & Memory Galaxy';
+  }, []);
+
   const galaxyProvider = useStellarisStore((s) => s.galaxyProvider);
   const showMusic = useStellarisStore((s) => s.features.musicGalaxy);
   const setMusicNodes = useStellarisStore((s) => s.setMusicNodes);

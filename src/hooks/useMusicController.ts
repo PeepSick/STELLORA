@@ -49,7 +49,6 @@ export function useMusicController(): void {
     // Only wire the listeners once — `boot` reads fresh state from the store
     // itself at fire time, so it doesn't need musicNodes/musicGalaxyEnabled
     // as reactive deps.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // If the feature gets turned off entirely, stop music rather than leaving

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, SlidersHorizontal, Crown, Gem, Bell, Menu } from 'lucide-react';
 import { useStellarisStore } from '@/store';
+import stelloraLogo from '@/img/stellora-logo-optimized.webp';
 
 export const TopHeader: React.FC = () => {
   const { toggleSearch, toggleChat, setActiveDockTab, activeDockTab } = useStellarisStore();
@@ -12,12 +13,13 @@ export const TopHeader: React.FC = () => {
     <header className="fixed top-0 left-0 right-0 h-16 z-40 px-6 flex items-center justify-between bg-gradient-to-b from-[#070811]/90 via-[#070811]/50 to-transparent backdrop-blur-[2px]">
       {/* Left: Brand Logo & System Title */}
       <div className="flex items-center gap-3">
-        {/* Leosis Emblem Icon */}
-        <div className="w-9 h-9 rounded-lg bg-[#121324] border border-[#ffcf77]/30 flex items-center justify-center shadow-[0_0_15px_rgba(255,207,119,0.15)] group hover:border-[#ffcf77]/60 transition-all cursor-pointer">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-[#ffcf77] transform group-hover:rotate-12 transition-transform duration-500">
-            <path d="M12 2L15 8L21 9L16.5 14L18 20L12 17L6 20L7.5 14L3 9L9 8L12 2Z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-            <circle cx="12" cy="12" r="3" fill="currentColor"/>
-          </svg>
+        {/* Stellora emblem */}
+        <div className="w-9 h-9 rounded-lg overflow-hidden border border-[#ffcf77]/30 shadow-[0_0_15px_rgba(255,207,119,0.15)] group hover:border-[#ffcf77]/60 transition-all cursor-pointer">
+          <img
+            src={stelloraLogo}
+            alt=""
+            className="w-full h-full object-cover object-top scale-125 transform group-hover:rotate-12 transition-transform duration-500"
+          />
         </div>
         
         <div>
