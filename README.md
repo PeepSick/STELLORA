@@ -9,6 +9,8 @@
 
 ![Stellora — Your Memories, In Orbit.](docs/stellora-logo.png)
 
+### 🌌 [Try the live demo → stellora.peepsicklabs.com](https://stellora.peepsicklabs.com)
+
 **Every memory is a star. Every story is a constellation.**
 
 Stellora is a 3D "living galaxy" that renders your knowledge base, your personal
